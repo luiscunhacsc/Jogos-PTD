@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Missão: Ciberpsicólogo - Transição Digital</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap');
+
+        :root {
+            --bg-color: #0f172a;
+            --glass-bg: rgba(30, 41, 59, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --primary-glow: #0ea5e9;
+            --correct-glow: #10b981;
+            --wrong-glow: #ef4444;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(14, 165, 233, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.15) 0px, transparent 50%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .game-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            width: 100%;
+            max-width: 800px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 20px;
+        }
+
+        .title-area h1 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .score-area {
+            font-size: 1.2rem;
+            font-weight: 600;
+            display: flex;
+            gap: 15px;
+        }
+
+        .score-area span {
+            background: rgba(14, 165, 233, 0.2);
+            padding: 5px 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(14, 165, 233, 0.3);
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #38bdf8, #818cf8);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        .question-text {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .option-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            padding: 18px 25px;
+            border-radius: 16px;
+            font-size: 1rem;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .option-btn.correct {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: var(--correct-glow);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .option-btn.wrong {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: var(--wrong-glow);
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+        }
+
+        .option-btn:disabled {
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .feedback-area {
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 12px;
+            display: none;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .feedback-area.show {
+            display: block;
+        }
+
+        .feedback-area h3 {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .next-btn {
+            margin-top: 25px;
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(90deg, #38bdf8, #818cf8);
+            border: none;
+            border-radius: 16px;
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .next-btn:hover {
+            opacity: 0.9;
+        }
+
+        .screen {
+            display: none;
+            text-align: center;
+        }
+
+        .screen.active {
+            display: block;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .btn-large {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            background: linear-gradient(90deg, #10b981, #059669);
+            border: none;
+            border-radius: 30px;
+            color: white;
+            font-weight: 800;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: transform 0.2s;
+        }
+        
+        .btn-large:hover {
+            transform: scale(1.05);
+        }
+
+        /* Estilo para o input do número de perguntas */
+        .input-group {
+            margin: 20px 0 30px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .input-group label {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .input-number {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            padding: 10px 15px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            width: 80px;
+            text-align: center;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .input-number:focus {
+            border-color: #38bdf8;
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .icon-large { font-size: 4rem; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+
+    <div class="game-container">
+        <div id="start-screen" class="screen active">
+            <div class="icon-large">🧠💻</div>
+            <h1 style="font-size: 2.5rem; margin-bottom: 15px; color: #38bdf8;">Missão: Ciberpsicólogo</h1>
+            <p style="color: var(--text-muted); font-size: 1.1rem;">
+                A transição digital precisa de profissionais preparados. Testa os teus conhecimentos sobre os impactos, éticas e desafios psicológicos na era digital.
+            </p>
+            
+            <div class="input-group">
+                <label for="num-questions">Quantas perguntas queres responder?</label>
+                <input type="number" id="num-questions" min="1" max="20" value="5" class="input-number">
+            </div>
+
+            <button class="btn-large" onclick="startGame()">INICIAR MISSÃO</button>
+        </div>
+
+        <div id="game-screen" class="screen">
+            <header>
+                <div class="title-area">
+                    <h1>Nível de Literacia</h1>
+                </div>
+                <div class="score-area">
+                    <span>Score: <span id="score-display">0</span></span>
+                    <span>Q: <span id="question-count">1</span>/<span id="total-questions">5</span></span>
+                </div>
+            </header>
+
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+
+            <div class="question-text" id="question-text">A carregar pergunta...</div>
+            
+            <div class="options-grid" id="options-grid"></div>
+
+            <div class="feedback-area" id="feedback-area">
+                <h3 id="feedback-title"></h3>
+                <p id="feedback-text"></p>
+            </div>
+
+            <button class="next-btn" id="next-btn" onclick="nextQuestion()">PRÓXIMA QUESTÃO 🚀</button>
+        </div>
+
+        <div id="end-screen" class="screen">
+            <div class="icon-large" id="end-icon">🏆</div>
+            <h1 style="font-size: 2.5rem; margin-bottom: 15px; color: #38bdf8;">Análise Concluída!</h1>
+            <p style="font-size: 1.2rem; margin-bottom: 10px;">A tua pontuação de Resiliência Digital:</p>
+            <h2 style="font-size: 3rem; color: #10b981; margin-bottom: 30px;" id="final-score">0/5</h2>
+            <button class="btn-large" onclick="resetGame()">TENTAR NOVAMENTE</button>
+        </div>
+    </div>
+
+    <script>
+        const questionsDB = [
+            {
+                question: "Como a ética e deontologia são preservadas na era digital?",
+                options: [
+                    "Pela criação e aplicação de normas e diretrizes que assegurem o respeito pela privacidade, proteção de dados e direitos dos utilizadores.",
+                    "Através da eliminação total de intervenções digitais, como chatbots, para evitar falhas de sigilo.",
+                    "Pela delegação exclusiva da ética aos engenheiros de software que programam as plataformas.",
+                    "Garantindo que os dados dos pacientes sejam públicos para efeitos de transparência científica."
+                ],
+                correct: 0,
+                explanation: "Os psicólogos desempenham um papel essencial ao integrar estes princípios em todas as suas práticas, desde a recolha de dados até à intervenção. É importante garantir que intervenções como chatbots ou teleterapia sigam princípios de confidencialidade e consentimento informado."
+            },
+            {
+                question: "Como as fake news influenciam a tomada de decisão?",
+                options: [
+                    "Melhoram a literacia digital porque obrigam as pessoas a pesquisar mais.",
+                    "Distorcem a perceção da realidade e manipulam crenças ao explorarem preconceitos cognitivos, como o viés de confirmação.",
+                    "Não têm impacto psicológico direto, afetando apenas os algoritmos das redes sociais.",
+                    "Aumentam a resiliência cognitiva, tornando os utilizadores imunes a manipulações futuras."
+                ],
+                correct: 1,
+                explanation: "As fake news levam as pessoas a acreditarem e partilharem informações que confirmam as suas crenças pré-existentes. A Psicologia pode intervir ao desenvolver estratégias educativas que promovam o pensamento crítico e a verificação de fontes."
+            },
+            {
+                question: "Quais são os riscos psicológicos associados ao uso excessivo de tecnologias digitais?",
+                options: [
+                    "Aumento da produtividade crónica e excesso de empatia.",
+                    "Desenvolvimento acelerado de competências sociais no mundo real.",
+                    "Ansiedade, depressão, fadiga mental, isolamento social e burnout digital.",
+                    "Melhoria na qualidade do sono devido ao cansaço ocular provocado pelos ecrãs."
+                ],
+                correct: 2,
+                explanation: "O uso excessivo pode afetar a autoestima devido à comparação social e causar distúrbios do sono devido à exposição à luz azul. A dependência pode interferir nas relações presenciais e levar ao burnout digital (exaustão)."
+            },
+            {
+                question: "O que é resiliência digital e como promovê-la?",
+                options: [
+                    "É a capacidade de um indivíduo enfrentar e superar os desafios e riscos associados ao ambiente digital, promovida através de educação para a literacia digital.",
+                    "É a capacidade dos servidores resistirem a ataques cibernéticos pesados.",
+                    "É a recusa em utilizar qualquer tipo de rede social para preservar a saúde mental.",
+                    "É a habilidade de passar longas horas online sem sentir fadiga ocular."
+                ],
+                correct: 0,
+                explanation: "Envolve a habilidade de lidar com desinformação, ataques cibernéticos e pressões sociais online. Promove-se ensinando competências de regulação emocional, pensamento crítico e cultivando uma cultura de apoio online."
+            },
+            {
+                question: "Como a Psicologia pode ajudar a otimizar o teletrabalho?",
+                options: [
+                    "Impondo sistemas de monitorização de ecrã para garantir que os trabalhadores não se distraem.",
+                    "Ao estudar os fatores que afetam a produtividade e o bem-estar, ajudando a desenvolver estratégias de gestão de tempo e regulação emocional.",
+                    "Aconselhando as empresas a terminar com o teletrabalho devido ao seu impacto irremediável no isolamento.",
+                    "Forçando a fusão completa entre o ambiente familiar e o profissional."
+                ],
+                correct: 1,
+                explanation: "Questões como a distração e a dificuldade em separar o trabalho da vida pessoal são desafios comuns. A promoção do equilíbrio entre trabalho e vida pessoal é essencial para garantir a satisfação e a saúde mental dos trabalhadores."
+            },
+            {
+                question: "Como a Psicologia aborda os fatores humanos em sistemas digitais?",
+                options: [
+                    "Estudando como os indivíduos interagem com sistemas digitais para otimizar a usabilidade e satisfação, considerando limitações cognitivas.",
+                    "Focando-se exclusivamente na velocidade de processamento do hardware para reduzir o stress tecnológico.",
+                    "Ignorando as emoções dos utilizadores, pois os sistemas digitais devem ser puramente lógicos e objetivos.",
+                    "Substituindo o trabalho humano por inteligência artificial em todas as interfaces de utilizador."
+                ],
+                correct: 0,
+                explanation: "A análise psicológica ajuda a desenvolver sistemas mais intuitivos que atendam às necessidades reais dos utilizadores. Psicólogos colaboram com designers para minimizar a frustração e reduzir o stress tecnológico."
+            },
+            {
+                question: "Como a Psicologia contribui para a análise de arquiteturas digitais?",
+                options: [
+                    "Desenvolvendo hardware ergonómico para evitar lesões por esforço repetitivo ao usar computadores.",
+                    "Através da programação de firewalls mais seguros contra ciberataques e roubo de identidade.",
+                    "Estudando como os elementos de design influenciam o comportamento, prevenindo a manipulação e a dependência digital.",
+                    "Garantindo que a estética da plataforma siga as últimas tendências de arte visual contemporânea."
+                ],
+                correct: 2,
+                explanation: "Psicólogos analisam a usabilidade e estratégias persuasivas que podem induzir comportamentos indesejáveis (ex: compulsão por recompensas). Assim, orientam interfaces que respeitem a autonomia dos utilizadores."
+            },
+            {
+                question: "Como a Psicologia pode ajudar a combater o efeito de desinibição online?",
+                options: [
+                    "Incentivando o anonimato absoluto para que as pessoas se expressem sem qualquer tipo de medo ou filtro.",
+                    "Promovendo programas de sensibilização que incentivem o civismo digital e o ensino de competências emocionais.",
+                    "Criando algoritmos que bloqueiam automaticamente qualquer utilizador que discorde da opinião da maioria.",
+                    "Através da prescrição de medicação ansiolítica para utilizadores frequentes de fóruns e redes sociais."
+                ],
+                correct: 1,
+                explanation: "O efeito de desinibição resulta muitas vezes em agressividade ou trolling. Ensinar competências emocionais e desenvolver comportamentos pró-sociais reduz a agressividade e melhora as interações no espaço digital."
+            },
+            {
+                question: "Como a Psicologia pode ajudar a educar crianças sobre a navegação segura na internet?",
+                options: [
+                    "Proibindo completamente o acesso à internet até atingirem a maioridade legal.",
+                    "Ensinando as crianças a memorizar os termos de serviço complexos de todas as redes sociais.",
+                    "Transferindo essa responsabilidade exclusivamente para as empresas de telecomunicações e provedores de internet.",
+                    "Desenvolvendo programas educativos focados em literacia digital, identificação de riscos e regulação emocional."
+                ],
+                correct: 3,
+                explanation: "Ensinar regulação emocional e tomada de decisões ajuda as crianças a responder adequadamente a situações de risco (ex: cyberbullying ou contacto com estranhos), promovendo autocontrolo."
+            },
+            {
+                question: "Como a Psicologia pode auxiliar na promoção da cidadania digital?",
+                options: [
+                    "Fomentando comportamentos éticos através de programas que ensinam competências socioemocionais e comunicação não agressiva.",
+                    "Obrigando os utilizadores a revelarem a sua identidade legal, morada e contacto telefónico em todas as plataformas.",
+                    "Focando-se apenas na punição judicial e criminal de atos cibernéticos após a sua ocorrência.",
+                    "Ensinando técnicas de hacking ético a todos os cidadãos para se poderem defender ativamente online."
+                ],
+                correct: 0,
+                explanation: "Estas intervenções de regulação emocional e empatia são particularmente importantes para combater comportamentos como o trolling e o cyberbullying, que minam o civismo digital."
+            },
+            {
+                question: "Como a Psicologia pode contribuir para a ciberresiliência dos cidadãos?",
+                options: [
+                    "Criando software antivírus mais potente para os computadores pessoais da população em geral.",
+                    "Ensinando pensamento crítico e estratégias de coping para lidar com ameaças como ciberataques e desinformação.",
+                    "Desencorajando ativamente o uso de tecnologias digitais em ambientes de trabalho críticos.",
+                    "Isolando os indivíduos vulneráveis em redes locais privadas sem acesso à internet global."
+                ],
+                correct: 1,
+                explanation: "Programas de literacia digital e cibersegurança capacitam os cidadãos a agir de forma mais consciente e segura, fortalecendo a sua capacidade de responder a incidentes cibernéticos."
+            },
+            {
+                question: "Como a Psicologia pode influenciar o desenvolvimento de algoritmos moralmente responsáveis?",
+                options: [
+                    "Ditando as linguagens de programação obrigatórias que devem ser usadas pelos engenheiros de software.",
+                    "Proibindo o uso de inteligência artificial em qualquer decisão que afete seres humanos diretamente.",
+                    "Identificando vieses algorítmicos e garantindo interfaces transparentes que expliquem como as decisões são tomadas.",
+                    "Substituindo os programadores de TI por psicólogos comportamentais na escrita do código-fonte."
+                ],
+                correct: 2,
+                explanation: "A Psicologia fornece compreensão sobre como preconceitos cognitivos e sociais são incorporados na IA. Psicólogos colaboram com designers para garantir sistemas justos e interações conscientes."
+            },
+            {
+                question: "Como a Realidade Virtual pode ser utilizada na formação de psicólogos?",
+                options: [
+                    "Criando cenários clínicos simulados para praticar competências terapêuticas e de diagnóstico sem riscos para pacientes.",
+                    "Apenas para relaxamento mental dos estudantes universitários entre as aulas teóricas intensas.",
+                    "Para substituir completamente e de forma definitiva as consultas presenciais no futuro da profissão.",
+                    "Como ferramenta exclusiva para o ensino abstrato de estatística e métodos de investigação quantitativa."
+                ],
+                correct: 0,
+                explanation: "A RV facilita o treino em condições psicológicas específicas (como fobias) e permite praticar decisões clínicas em situações de crise com alta validade ecológica e segurança."
+            },
+            {
+                question: "Como as tecnologias digitais influenciam o desenvolvimento infantil?",
+                options: [
+                    "Apenas prejudicam a visão a longo prazo, não tendo qualquer impacto cognitivo ou emocional documentado.",
+                    "Garantem sempre um QI intelectual superior devido à vasta exposição precoce a informação digital.",
+                    "Podem promover cognição com recursos educativos, mas o uso excessivo prejudica a socialização e o sono.",
+                    "Eliminam a necessidade biológica de socialização presencial na infância moderna."
+                ],
+                correct: 2,
+                explanation: "O uso excessivo pode levar ao isolamento e diminuição de interações face a face. A monitorização e o equilíbrio no uso são essenciais para um impacto positivo."
+            },
+            {
+                question: "Como as tecnologias podem apoiar o envelhecimento saudável?",
+                options: [
+                    "Limitando o acesso dos idosos a informações complexas para evitar que sofram de stress cognitivo.",
+                    "Através de aplicações de saúde, sensores de segurança e plataformas que mantêm a autonomia e ligação social.",
+                    "Substituindo totalmente a necessidade afetiva de familiares e cuidadores humanos presenciais.",
+                    "Apenas servindo para entretenimento passivo diário, como ver televisão ou ouvir rádio online."
+                ],
+                correct: 1,
+                explanation: "As tecnologias facilitam o acesso a cuidados de saúde e suporte. Psicólogos ajudam a criar intervenções fáceis de usar e personalizadas para as necessidades desta população."
+            },
+            {
+                question: "Como garantir a gestão ética de dados pessoais?",
+                options: [
+                    "Aplicando princípios de privacidade e consentimento informado, garantindo que os utilizadores compreendem como os dados são usados.",
+                    "Escondendo os termos de uso em linguagem jurídica propositadamente complexa e extensa.",
+                    "Recolhendo o máximo de dados possível, desde que as empresas prometam anonimizá-los no futuro.",
+                    "Deixando a gestão ética de dados exclusivamente a cargo de algoritmos inteligentes sem supervisão humana."
+                ],
+                correct: 0,
+                explanation: "Psicólogos desenvolvem políticas que respeitam a privacidade, assegurando que o consentimento pode ser retirado a qualquer momento. É fundamental educar utilizadores e cumprir leis como o RGPD."
+            },
+            {
+                question: "Como o Big Data pode ser relevante para a Psicologia?",
+                options: [
+                    "Serve apenas para as equipas de marketing clínico venderem mais testes psicológicos padronizados.",
+                    "Substitui completamente a necessidade de realizar entrevistas clínicas ou questionários qualitativos.",
+                    "É irrelevante, pois a Psicologia foca-se apenas no indivíduo isolado e não em grandes massas de dados.",
+                    "Permite analisar grandes volumes de dados comportamentais, revelando padrões para intervenções personalizadas."
+                ],
+                correct: 3,
+                explanation: "Com Big Data identificam-se fatores preditivos de saúde mental. Contudo, o seu uso exige princípios éticos rigorosos, como a proteção de dados e obtenção de consentimento informado."
+            },
+            {
+                question: "Como os princípios de psicologia comportamental são aplicados na criação de ambientes online viciantes?",
+                options: [
+                    "Promovendo a leitura de textos académicos longos e sem interrupções visuais.",
+                    "Através de técnicas de reforço intermitente e gamificação (likes, notificações) que ativam recompensas cerebrais.",
+                    "Exigindo pagamentos monetários constantes para aceder a funcionalidades básicas da plataforma.",
+                    "Reduzindo artificialmente o tempo de carregamento das páginas web para gerar impaciência."
+                ],
+                correct: 1,
+                explanation: "A ativação do sistema de recompensa gera dopamina, incentivando a repetição do comportamento (dependência). A Psicologia ajuda a identificar estes padrões para promover um uso saudável."
+            },
+            {
+                question: "De que forma a Psicologia pode contribuir para o design de intervenções educativas digitais inclusivas?",
+                options: [
+                    "Aplicando conhecimentos sobre diversidade cognitiva para criar materiais acessíveis a diferentes estilos de aprendizagem.",
+                    "Padronizando um único método de ensino rigoroso e estático para todos os utilizadores globais.",
+                    "Aumentando a complexidade tecnológica das plataformas apenas para desafiar os alunos mais astutos.",
+                    "Focando o design das interfaces apenas em alunos com altas capacidades intelectuais confirmadas."
+                ],
+                correct: 0,
+                explanation: "A Psicologia orienta a criação de plataformas que promovem a autonomia e consideram necessidades especiais (visão, leitura, etc.), garantindo que ninguém seja excluído devido a barreiras tecnológicas."
+            },
+            {
+                question: "De que forma a Psicologia pode influenciar políticas públicas na era digital?",
+                options: [
+                    "Candidatando obrigatoriamente psicólogos a cargos governamentais de ministros da tecnologia.",
+                    "Proibindo legalmente a importação de hardware estrangeiro não avaliado clinicamente.",
+                    "Fornecendo dados científicos sobre o impacto tecnológico para formular regulamentações que protejam os cidadãos.",
+                    "Substituindo o voto democrático tradicional por elaborados inquéritos de personalidade online."
+                ],
+                correct: 2,
+                explanation: "Psicólogos atuam como consultores no desenvolvimento de políticas que promovam privacidade, segurança online e equidade no acesso. Colaboram ainda na criação de programas de literacia digital."
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedQuestions = [];
+
+        function startGame() {
+            // Obter e validar o número de perguntas escolhido pelo jogador
+            const numInput = document.getElementById('num-questions');
+            let numQuestions = parseInt(numInput.value);
+
+            if (isNaN(numQuestions) || numQuestions < 1) {
+                numQuestions = 1;
+            } else if (numQuestions > questionsDB.length) {
+                numQuestions = questionsDB.length;
+            }
+
+            // Baralhar a base de dados e cortar pelo número escolhido
+            selectedQuestions = [...questionsDB].sort(() => Math.random() - 0.5).slice(0, numQuestions);
+            currentQuestionIndex = 0;
+            score = 0;
+            
+            document.getElementById('total-questions').innerText = selectedQuestions.length;
+            document.getElementById('start-screen').classList.remove('active');
+            document.getElementById('end-screen').classList.remove('active');
+            document.getElementById('game-screen').classList.add('active');
+            
+            updateScoreDisplay();
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const q = selectedQuestions[currentQuestionIndex];
+            document.getElementById('question-count').innerText = currentQuestionIndex + 1;
+            document.getElementById('question-text').innerText = q.question;
+            
+            // Atualizar barra de progresso
+            const progress = ((currentQuestionIndex) / selectedQuestions.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+
+            const optionsGrid = document.getElementById('options-grid');
+            optionsGrid.innerHTML = '';
+            
+            // Baralhar opções mantendo o rasto da resposta correta
+            let optionsWithIndex = q.options.map((opt, index) => ({ text: opt, isCorrect: index === q.correct }));
+            optionsWithIndex.sort(() => Math.random() - 0.5);
+
+            optionsWithIndex.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt.text;
+                btn.onclick = () => checkAnswer(btn, opt.isCorrect, q.explanation);
+                optionsGrid.appendChild(btn);
+            });
+
+            // Resetar área de feedback
+            document.getElementById('feedback-area').className = 'feedback-area';
+            document.getElementById('next-btn').style.display = 'none';
+        }
+
+        function checkAnswer(selectedBtn, isCorrect, explanation) {
+            // Desativar todos os botões
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach(btn => btn.disabled = true);
+
+            const feedbackArea = document.getElementById('feedback-area');
+            const feedbackTitle = document.getElementById('feedback-title');
+            const feedbackText = document.getElementById('feedback-text');
+
+            if (isCorrect) {
+                selectedBtn.classList.add('correct');
+                score += 100;
+                updateScoreDisplay();
+                feedbackArea.style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
+                feedbackArea.style.borderLeft = '4px solid #10b981';
+                feedbackTitle.innerHTML = '✅ Correto! Boa Análise.';
+                feedbackTitle.style.color = '#10b981';
+            } else {
+                selectedBtn.classList.add('wrong');
+                feedbackArea.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+                feedbackArea.style.borderLeft = '4px solid #ef4444';
+                feedbackTitle.innerHTML = '❌ Incorreto. Revisão Necessária.';
+                feedbackTitle.style.color = '#ef4444';
+            }
+
+            feedbackText.innerHTML = `<strong>Contexto Clínico:</strong> ${explanation}`;
+            feedbackArea.classList.add('show');
+            document.getElementById('next-btn').style.display = 'block';
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < selectedQuestions.length) {
+                loadQuestion();
+            } else {
+                endGame();
+            }
+        }
+
+        function updateScoreDisplay() {
+            document.getElementById('score-display').innerText = score;
+        }
+
+        function endGame() {
+            document.getElementById('game-screen').classList.remove('active');
+            document.getElementById('end-screen').classList.add('active');
+            
+            const totalScore = score / 100;
+            document.getElementById('final-score').innerText = `${totalScore} / ${selectedQuestions.length}`;
+            
+            const icon = document.getElementById('end-icon');
+            if (totalScore === selectedQuestions.length) {
+                icon.innerText = '🌟';
+            } else if (totalScore >= selectedQuestions.length / 2) {
+                icon.innerText = '👍';
+            } else {
+                icon.innerText = '📚';
+            }
+        }
+
+        function resetGame() {
+            document.getElementById('end-screen').classList.remove('active');
+            document.getElementById('start-screen').classList.add('active');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1717 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PTD • Missão Transição Digital (Jogo de Estudo)</title>
+  <style>
+    :root{
+      --bg: #0b1020;
+      --panel: rgba(255,255,255,.06);
+      --panel2: rgba(255,255,255,.09);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.68);
+      --line: rgba(255,255,255,.12);
+      --good: #7CFFB2;
+      --warn: #FFD27A;
+      --bad:  #FF7A8A;
+      --accent:#7aa2ff;
+      --accent2:#b07cff;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 18px;
+      --radius2: 14px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+
+    [data-theme="light"]{
+      --bg: #f6f7fb;
+      --panel: rgba(10,20,40,.06);
+      --panel2: rgba(10,20,40,.10);
+      --text: rgba(10,20,40,.92);
+      --muted: rgba(10,20,40,.66);
+      --line: rgba(10,20,40,.14);
+      --shadow: 0 10px 30px rgba(10,20,40,.12);
+      --accent:#3b6cff;
+      --accent2:#8a4bff;
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(1200px 700px at 20% 10%, rgba(122,162,255,.20), transparent 55%),
+        radial-gradient(900px 600px at 80% 20%, rgba(176,124,255,.18), transparent 55%),
+        radial-gradient(900px 700px at 50% 90%, rgba(124,255,178,.10), transparent 60%),
+        var(--bg);
+      overflow-x:hidden;
+    }
+
+    a{ color:inherit; }
+    .wrap{
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 18px 16px 32px;
+    }
+
+    /* Header */
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding: 10px 8px 14px;
+    }
+    .brand{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      min-width: 260px;
+    }
+    .logo{
+      width:44px; height:44px;
+      border-radius: 14px;
+      background:
+        radial-gradient(30px 30px at 30% 30%, rgba(255,255,255,.18), transparent 55%),
+        linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    .logo:after{
+      content:"";
+      position:absolute; inset:-40%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.25), transparent);
+      transform: rotate(25deg);
+      animation: shine 6s infinite;
+    }
+    @keyframes shine{
+      0%{ transform: translateX(-40%) rotate(25deg); opacity:.0;}
+      8%{ opacity:1;}
+      16%{ transform: translateX(40%) rotate(25deg); opacity:.0;}
+      100%{ transform: translateX(40%) rotate(25deg); opacity:0;}
+    }
+
+    .title{
+      display:flex;
+      flex-direction:column;
+      line-height:1.1;
+    }
+    .title strong{ font-size: 15px; letter-spacing:.2px; }
+    .title span{ font-size: 12.5px; color: var(--muted); margin-top:4px; }
+
+    .controls{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .pill{
+      display:flex; align-items:center; gap:10px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border:1px solid var(--line);
+      background: var(--panel);
+      box-shadow: none;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+      user-select:none;
+      cursor:pointer;
+    }
+    .pill:hover{ transform: translateY(-1px); background: var(--panel2); border-color: rgba(255,255,255,.18); }
+    [data-theme="light"] .pill:hover{ border-color: rgba(10,20,40,.18); }
+    .pill small{ color: var(--muted); }
+    .pill .dot{
+      width:10px; height:10px; border-radius:99px;
+      background: rgba(255,255,255,.25);
+      box-shadow: 0 0 0 3px rgba(255,255,255,.06);
+    }
+    .pill .dot.good{ background: var(--good); box-shadow: 0 0 0 3px rgba(124,255,178,.18); }
+    .pill .dot.warn{ background: var(--warn); box-shadow: 0 0 0 3px rgba(255,210,122,.18); }
+    .pill .dot.bad{  background: var(--bad);  box-shadow: 0 0 0 3px rgba(255,122,138,.18); }
+
+    /* Layout */
+    .grid{
+      display:grid;
+      grid-template-columns: 360px 1fr;
+      gap:16px;
+      align-items:start;
+      margin-top: 10px;
+    }
+    @media (max-width: 980px){
+      .grid{ grid-template-columns: 1fr; }
+      .brand{ min-width:auto; }
+    }
+
+    .card{
+      border:1px solid var(--line);
+      background: var(--panel);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .head{
+      padding:14px 14px 10px;
+      border-bottom:1px solid var(--line);
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .card .head h3{
+      margin:0;
+      font-size: 14px;
+      letter-spacing:.2px;
+    }
+    .card .head p{
+      margin:6px 0 0;
+      font-size: 12.5px;
+      color: var(--muted);
+    }
+    .card .body{ padding: 14px; }
+
+    /* Mode tabs */
+    .tabs{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .tab{
+      padding: 10px 12px;
+      border-radius: 999px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      cursor:pointer;
+      user-select:none;
+      transition: transform .12s ease, background .12s ease;
+      font-size: 13px;
+      display:flex; align-items:center; gap:8px;
+    }
+    .tab:hover{ transform: translateY(-1px); background: var(--panel2); }
+    .tab.active{
+      background: linear-gradient(135deg, rgba(122,162,255,.25), rgba(176,124,255,.22));
+      border-color: rgba(255,255,255,.18);
+    }
+    [data-theme="light"] .tab.active{
+      border-color: rgba(10,20,40,.16);
+    }
+    .kbd{
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 8px;
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.12);
+      color: var(--muted);
+    }
+    [data-theme="light"] .kbd{ background: rgba(10,20,40,.06); }
+
+    /* Stats panel */
+    .statline{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding: 10px 0;
+      border-bottom: 1px dashed var(--line);
+    }
+    .statline:last-child{ border-bottom:none; }
+    .statline strong{ font-size: 13px; }
+    .statline span{ color: var(--muted); font-size: 12.5px; }
+
+    .progress{
+      width:100%;
+      height:10px;
+      border-radius:999px;
+      background: rgba(255,255,255,.08);
+      border:1px solid var(--line);
+      overflow:hidden;
+      margin-top:10px;
+    }
+    .bar{
+      height:100%;
+      width:0%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius:999px;
+      transition: width .35s ease;
+    }
+
+    .badges{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:12px;
+    }
+    .badge{
+      padding:8px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      border:1px solid var(--line);
+      font-size: 12.5px;
+      color: var(--muted);
+      display:flex; align-items:center; gap:8px;
+    }
+    .badge.on{
+      color: var(--text);
+      background: linear-gradient(135deg, rgba(124,255,178,.16), rgba(122,162,255,.18));
+      border-color: rgba(255,255,255,.18);
+    }
+
+    /* Main game card */
+    .qnum{
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .question{
+      font-size: 18px;
+      line-height:1.25;
+      margin: 6px 0 0;
+      letter-spacing:.1px;
+    }
+    .hintrow{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top: 10px;
+    }
+    .chip{
+      padding: 7px 10px;
+      border-radius: 999px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      font-size: 12.5px;
+      color: var(--muted);
+    }
+    .chip strong{ color: var(--text); font-weight:600; }
+    .chip.good{ border-color: rgba(124,255,178,.24); color: rgba(124,255,178,.95); background: rgba(124,255,178,.08); }
+    .chip.warn{ border-color: rgba(255,210,122,.25); color: rgba(255,210,122,.95); background: rgba(255,210,122,.08); }
+    .chip.bad{  border-color: rgba(255,122,138,.25); color: rgba(255,122,138,.95); background: rgba(255,122,138,.08); }
+
+    .panel{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      border-radius: var(--radius2);
+      padding: 12px;
+      margin-top: 12px;
+    }
+    .panel h4{
+      margin:0 0 8px;
+      font-size: 13px;
+      color: var(--muted);
+      letter-spacing:.2px;
+    }
+    .panel p{
+      margin:0;
+      font-size: 14px;
+      line-height:1.5;
+      color: var(--text);
+      white-space: pre-wrap;
+    }
+
+    textarea{
+      width:100%;
+      min-height: 120px;
+      resize: vertical;
+      padding: 12px 12px;
+      border-radius: 14px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.05);
+      color: var(--text);
+      outline:none;
+      font-family: var(--sans);
+      font-size: 14.5px;
+      line-height:1.45;
+      transition: border-color .12s ease, background .12s ease;
+    }
+    textarea:focus{
+      border-color: rgba(122,162,255,.45);
+      background: rgba(255,255,255,.07);
+    }
+
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top: 12px;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .btnrow{ display:flex; gap:10px; flex-wrap:wrap; }
+
+    button{
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.05);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 14px;
+      cursor:pointer;
+      font-size: 13.5px;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+      user-select:none;
+    }
+    button:hover{ transform: translateY(-1px); background: var(--panel2); }
+    button.primary{
+      background: linear-gradient(135deg, rgba(122,162,255,.32), rgba(176,124,255,.26));
+      border-color: rgba(255,255,255,.18);
+    }
+    button.good{ background: rgba(124,255,178,.12); border-color: rgba(124,255,178,.26); }
+    button.warn{ background: rgba(255,210,122,.12); border-color: rgba(255,210,122,.26); }
+    button.bad{  background: rgba(255,122,138,.12); border-color: rgba(255,122,138,.26); }
+
+    .small{
+      font-size: 12.5px;
+      color: var(--muted);
+    }
+
+    /* Quiz options */
+    .options{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:10px;
+      margin-top: 12px;
+    }
+    .opt{
+      border:1px solid var(--line);
+      border-radius: 14px;
+      padding: 10px 12px;
+      background: rgba(255,255,255,.04);
+      cursor:pointer;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+      position:relative;
+      overflow:hidden;
+    }
+    .opt:hover{ transform: translateY(-1px); background: var(--panel2); }
+    .opt strong{ font-size: 13px; }
+    .opt span{ display:block; margin-top:6px; color: var(--muted); font-size: 12.5px; line-height:1.35; }
+    .opt.correct{ border-color: rgba(124,255,178,.30); background: rgba(124,255,178,.10); }
+    .opt.wrong{ border-color: rgba(255,122,138,.28); background: rgba(255,122,138,.10); }
+
+    /* Toast */
+    .toast{
+      position: fixed;
+      left:50%;
+      bottom: 16px;
+      transform: translateX(-50%) translateY(30px);
+      opacity:0;
+      pointer-events:none;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.35);
+      color: rgba(255,255,255,.92);
+      box-shadow: var(--shadow);
+      transition: opacity .18s ease, transform .18s ease;
+      max-width: min(720px, calc(100vw - 24px));
+      text-align:center;
+      font-size: 13px;
+    }
+    [data-theme="light"] .toast{
+      background: rgba(10,20,40,.85);
+      color: rgba(255,255,255,.96);
+    }
+    .toast.show{
+      opacity:1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Modal */
+    .modalBack{
+      position: fixed; inset:0;
+      background: rgba(0,0,0,.50);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding: 16px;
+      z-index: 50;
+    }
+    .modalBack.show{ display:flex; }
+    .modal{
+      width: min(740px, 100%);
+      border-radius: 18px;
+      border:1px solid var(--line);
+      background: var(--bg);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .modal .mhead{
+      padding:14px 14px 10px;
+      border-bottom:1px solid var(--line);
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:center;
+    }
+    .modal .mhead h3{ margin:0; font-size: 14px; }
+    .modal .mbody{ padding:14px; }
+    .modal .mbody p{ margin:0 0 10px; color: var(--muted); line-height:1.5; font-size: 13.5px; }
+    .row{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+    }
+    .toggle{
+      display:flex; gap:10px; align-items:center;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      cursor:pointer;
+      user-select:none;
+    }
+    .toggle b{ font-size:13px; }
+    .toggle small{ color: var(--muted); }
+    .sep{ height:1px; background: var(--line); margin: 12px 0; }
+
+    .danger{
+      border-color: rgba(255,122,138,.28)!important;
+      background: rgba(255,122,138,.10)!important;
+    }
+
+    .footerNote{
+      margin-top: 12px;
+      font-size: 12.5px;
+      color: var(--muted);
+      line-height:1.45;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap" id="app">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div class="title">
+          <strong>PTD • Missão Transição Digital</strong>
+          <span>Treino inteligente (repetição espaçada) + desafio + exame • Offline • PT-PT</span>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div class="pill" id="pillDue" title="Cartões a rever (devidos)">
+          <div class="dot warn" id="dueDot"></div>
+          <div>
+            <div style="font-size:13px;"><b id="dueCount">0</b> <small>a rever</small></div>
+            <div style="font-size:12px; color:var(--muted);" id="dueHint">a preparar missão…</div>
+          </div>
+        </div>
+
+        <div class="pill" id="pillLevel" title="XP e nível">
+          <div class="dot good"></div>
+          <div>
+            <div style="font-size:13px;"><b>Nível <span id="level">1</span></b> <small>(XP <span id="xp">0</span>)</small></div>
+            <div style="font-size:12px; color:var(--muted);" id="streakLine">Sequência: 0 dias</div>
+          </div>
+        </div>
+
+        <div class="pill" id="btnSettings" title="Definições">
+          <div class="dot"></div>
+          <div>
+            <div style="font-size:13px;"><b>Definições</b></div>
+            <div style="font-size:12px; color:var(--muted);">tema • reset • opções</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <!-- Left: mission control -->
+      <div class="card">
+        <div class="head">
+          <div>
+            <h3>Centro de Missão</h3>
+            <p>Aprender = recordar + feedback + espaçamento. Sem “decoreba”.</p>
+          </div>
+        </div>
+        <div class="body">
+          <div class="tabs" role="tablist">
+            <div class="tab active" data-mode="train" role="tab" tabindex="0">
+              🧠 Treino <span class="kbd">1</span>
+            </div>
+            <div class="tab" data-mode="quiz" role="tab" tabindex="0">
+              ⚡ Desafio <span class="kbd">2</span>
+            </div>
+            <div class="tab" data-mode="exam" role="tab" tabindex="0">
+              📝 Exame <span class="kbd">3</span>
+            </div>
+          </div>
+
+          <div class="sep"></div>
+
+          <div class="statline">
+            <strong>Progresso global</strong>
+            <span><span id="mastered">0</span>/50 dominadas</span>
+          </div>
+          <div class="progress" aria-label="Progresso">
+            <div class="bar" id="masteryBar"></div>
+          </div>
+
+          <div class="statline" style="margin-top:10px;">
+            <strong>Cartões novos</strong>
+            <span id="newCount">0</span>
+          </div>
+          <div class="statline">
+            <strong>Cartões a rever</strong>
+            <span id="dueCount2">0</span>
+          </div>
+          <div class="statline">
+            <strong>Precisão no Desafio</strong>
+            <span id="quizAcc">—</span>
+          </div>
+
+          <div class="badges" id="badges"></div>
+
+          <div class="footerNote">
+            Dica: no <b>Treino</b>, tenta lembrar <i>antes</i> de revelar. Depois avalia-te com honestidade.
+            Isso acelera imenso a aprendizagem.
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: gameplay -->
+      <div class="card">
+        <div class="head">
+          <div>
+            <div class="qnum" id="modeLine">Modo Treino • Cartão #—</div>
+            <div class="question" id="qText">A iniciar missão…</div>
+          </div>
+          <div class="qnum" id="timerLine" style="text-align:right;"></div>
+        </div>
+
+        <div class="body" id="mainBody">
+          <!-- dynamic -->
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <!-- Modal -->
+    <div class="modalBack" id="modalBack" role="dialog" aria-modal="true" aria-label="Definições">
+      <div class="modal">
+        <div class="mhead">
+          <h3>Definições</h3>
+          <button id="closeModal">Fechar</button>
+        </div>
+        <div class="mbody">
+          <p>Personaliza a experiência. (Tudo fica guardado no teu browser.)</p>
+
+          <div class="row">
+            <div class="toggle" id="toggleTheme">
+              <div style="width:12px;height:12px;border-radius:99px;background:linear-gradient(135deg,var(--accent),var(--accent2));"></div>
+              <div>
+                <b>Tema</b><br/>
+                <small id="themeLabel">Escuro</small>
+              </div>
+            </div>
+
+            <div class="toggle" id="toggleHints">
+              <div style="width:12px;height:12px;border-radius:99px;background:rgba(255,255,255,.35);"></div>
+              <div>
+                <b>Pistas automáticas</b><br/>
+                <small id="hintsLabel">Ligadas</small>
+              </div>
+            </div>
+
+            <div class="toggle" id="toggleSound">
+              <div style="width:12px;height:12px;border-radius:99px;background:rgba(255,255,255,.35);"></div>
+              <div>
+                <b>Sons subtis</b><br/>
+                <small id="soundLabel">Ligados</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="sep"></div>
+
+          <p><b>Reset</b> (cuidado): apaga progresso, XP e agenda de repetição espaçada.</p>
+          <div class="row">
+            <button class="danger" id="resetAll">Reset total</button>
+            <button id="exportData">Exportar progresso</button>
+            <button id="importData">Importar progresso</button>
+          </div>
+
+          <div class="footerNote" style="margin-top:10px;">
+            Teclas: <span class="kbd">1</span> Treino • <span class="kbd">2</span> Desafio • <span class="kbd">3</span> Exame • <span class="kbd">Espaço</span> revelar (Treino)
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* ============================================================
+   PTD • Missão Transição Digital
+   Baseado no banco de 50 questões + respostas do PDF fornecido.
+   (Repetição espaçada + quiz + exame com feedback por keywords.)
+============================================================ */
+
+/* ---------- Conteúdo (50 Q/A) ---------- */
+const BANK = [
+  { id:1, q:"Como a ética e deontologia são preservadas na era digital?",
+    a:`A preservação da ética e da deontologia na era digital é garantida pela criação e aplicação de normas e diretrizes que assegurem o respeito pela privacidade, pela proteção de dados e pelos direitos dos utilizadores. Os psicólogos desempenham um papel essencial ao integrar estes princípios em todas as suas práticas profissionais, desde a recolha de dados até à intervenção com tecnologias emergentes. Além disso, é importante garantir que as intervenções digitais, como o uso de chatbots ou plataformas de teleterapia, sigam princípios de confidencialidade e consentimento informado, salvaguardando a dignidade e o bem-estar dos indivíduos.` },
+
+  { id:2, q:"Como a Psicologia aborda os fatores humanos em sistemas digitais?",
+    a:`A Psicologia dos fatores humanos estuda como os indivíduos interagem com sistemas digitais e como essas interações podem ser otimizadas para melhorar a usabilidade, a acessibilidade e a satisfação do utilizador. A análise psicológica dos fatores humanos considera as limitações cognitivas e emocionais dos utilizadores, ajudando a desenvolver sistemas mais intuitivos e que atendam às necessidades reais dos utilizadores. Psicólogos podem colaborar com designers e engenheiros para criar interfaces que minimizem a frustração e promovam uma experiência positiva, reduzindo o stress tecnológico.` },
+
+  { id:3, q:"Como a Psicologia contribui para a análise de arquiteturas digitais?",
+    a:`A Psicologia contribui para a análise de arquiteturas digitais ao estudar como os elementos de design das plataformas online influenciam o comportamento dos utilizadores. Psicólogos analisam a usabilidade, a experiência do utilizador e as estratégias persuasivas que podem induzir comportamentos indesejáveis, como a dependência digital ou a compulsão por recompensas online. Ao compreender como os utilizadores interagem com as plataformas digitais, a Psicologia pode orientar o desenvolvimento de interfaces que respeitem a autonomia dos utilizadores e promovam escolhas informadas, prevenindo a manipulação e o vício.` },
+
+  { id:4, q:"Como a Psicologia pode ajudar a combater o efeito de desinibição online e a promover civismo digital?",
+    a:`O efeito de desinibição online refere-se ao comportamento desinibido que muitas pessoas demonstram no ambiente digital, muitas vezes resultando em agressividade, trolling ou discurso de ódio. A Psicologia pode ajudar a combater este fenómeno ao promover programas de sensibilização que incentivem o civismo digital, o respeito e a empatia nas interações online. Estratégias como o ensino de competências emocionais e o desenvolvimento de comportamentos pró-sociais podem reduzir os comportamentos agressivos e melhorar a qualidade das interações no espaço digital.` },
+
+  { id:5, q:"Como a Psicologia pode ajudar a educar crianças sobre a navegação segura na internet?",
+    a:`A Psicologia pode desempenhar um papel fundamental na educação digital das crianças, ensinando-as a navegar de forma segura na internet. Psicólogos podem desenvolver programas educativos que foquem em competências de literacia digital, como a verificação de informações, a proteção de dados pessoais e a identificação de riscos online, como o cyberbullying e o contacto com estranhos. Ensinar regulação emocional e tomada de decisões conscientes pode ajudar as crianças a responder adequadamente a situações de risco online, promovendo comportamentos de cibersegurança e autocontrolo no ambiente digital.` },
+
+  { id:6, q:"Como a Psicologia pode ajudar a otimizar o teletrabalho?",
+    a:`A Psicologia pode otimizar o teletrabalho ao estudar os fatores que afetam tanto a produtividade quanto o bem-estar dos trabalhadores. Questões como a gestão do tempo, a distração e a dificuldade em separar o trabalho da vida pessoal são desafios comuns. Psicólogos podem ajudar a desenvolver estratégias de gestão de tempo, apoiar a criação de um ambiente de trabalho saudável em casa e oferecer ferramentas de regulação emocional para lidar com o stress e o isolamento que o teletrabalho pode trazer. A promoção do equilíbrio entre trabalho e vida pessoal é essencial para garantir a satisfação e a saúde mental dos trabalhadores.` },
+
+  { id:7, q:"Como a Psicologia pode auxiliar na promoção da cidadania digital?",
+    a:`A Psicologia pode desempenhar um papel fundamental na promoção da cidadania digital ao fomentar comportamentos éticos, responsáveis e respeitadores no ambiente online. Psicólogos podem ajudar a desenvolver programas educativos que incentivem os utilizadores a agir com empatia, a respeitar os direitos dos outros e a participar de forma cívica nas plataformas digitais. Além disso, a Psicologia pode ensinar competências socioemocionais, como a regulação emocional e a comunicação não agressiva, que são essenciais para interações saudáveis online. Estas intervenções são particularmente importantes para combater comportamentos como o trolling e o cyberbullying, que minam o civismo digital.` },
+
+  { id:8, q:"Como a Psicologia pode contribuir para a ciberresiliência dos cidadãos?",
+    a:`A ciberresiliência refere-se à capacidade de um indivíduo de lidar com as ameaças e riscos digitais, como ciberataques, desinformação e invasões de privacidade. A Psicologia pode ajudar a promover esta resiliência ao ensinar competências de pensamento crítico e ao desenvolver estratégias de coping que permitam aos indivíduos protegerem-se contra os riscos do mundo digital. Além disso, programas educativos que promovam a literacia digital e a cibersegurança podem capacitar os cidadãos a agir de forma mais consciente e segura no ambiente online, fortalecendo a sua capacidade de responder a incidentes cibernéticos.` },
+
+  { id:9, q:"Como a Psicologia pode influenciar o desenvolvimento de algoritmos moralmente responsáveis?",
+    a:`A Psicologia pode influenciar o desenvolvimento de algoritmos moralmente responsáveis ao fornecer uma compreensão aprofundada de como preconceitos cognitivos e vieses sociais podem ser incorporados em sistemas de IA. Psicólogos podem colaborar com engenheiros e designers para identificar e eliminar vieses algorítmicos, garantindo que os algoritmos sejam justos e equitativos. Além disso, a Psicologia pode orientar o desenvolvimento de interfaces transparentes que expliquem como os algoritmos tomam decisões, garantindo que os utilizadores compreendam o processo e possam interagir conscientemente com os sistemas.` },
+
+  { id:10, q:"Como a Realidade Virtual pode ser utilizada na formação de psicólogos?",
+    a:`A Realidade Virtual (RV) oferece um ambiente controlado e simulado que pode ser utilizado para a formação de psicólogos. A RV permite criar cenários clínicos complexos, onde os estudantes podem praticar competências terapêuticas e de diagnóstico sem riscos para os pacientes. Além disso, a RV facilita o treino de intervenções em condições psicológicas específicas (como perturbações de ansiedade ou fobias) e expõe os estudantes a situações realistas que seriam difíceis de replicar em ambientes tradicionais. Com o uso de RV, é possível praticar a tomada de decisões clínicas e a gestão de situações de crise em condições seguras e com alta validade ecológica.` },
+
+  { id:11, q:"Como a transição digital afeta diferentes culturas?",
+    a:`A transição digital pode ter um impacto diferente nas diversas culturas, dependendo da forma como estas se adaptam e integram as novas tecnologias. Em algumas culturas, a transição digital pode promover a inclusão e facilitar o acesso à educação e ao emprego, enquanto em outras pode acentuar as desigualdades, especialmente em regiões com acesso limitado a tecnologias. Além disso, o conteúdo digital tende a refletir a cultura dominante, o que pode criar barreiras para a preservação das identidades culturais de minorias. Psicólogos podem ajudar a garantir que a transição digital seja inclusiva e sensível às diferenças culturais, promovendo a diversidade nas plataformas digitais.` },
+
+  { id:12, q:"Como as fake news influenciam a tomada de decisão e como a Psicologia pode intervir?",
+    a:`As fake news influenciam a tomada de decisão ao distorcer a percepção da realidade e ao manipular crenças e atitudes através de informações falsas ou enganosas. Estas notícias exploram preconceitos cognitivos, como o viés de confirmação, levando as pessoas a acreditarem e partilharem informações que confirmam as suas crenças pré-existentes. A Psicologia pode intervir ao desenvolver estratégias educativas que promovam o pensamento crítico e a verificação de fontes, ajudando as pessoas a resistirem à influência das fake news. Programas de literacia digital que ensinem os utilizadores a identificar e denunciar conteúdos falsos também são essenciais para mitigar o seu impacto.` },
+
+  { id:13, q:"Como as tecnologias digitais afetam a saúde mental?",
+    a:`As tecnologias digitais têm um impacto misto na saúde mental. Por um lado, oferecem ferramentas para apoio psicológico, como aplicações de meditação, terapia online e redes de suporte social. Por outro, o uso excessivo de tecnologias, especialmente das redes sociais, pode contribuir para ansiedade, depressão e distúrbios do sono. A exposição constante a conteúdos negativos ou a comparação social nas redes sociais pode afetar a autoestima e aumentar sentimentos de isolamento. Psicólogos podem ajudar a criar estratégias de coping e sensibilizar para a gestão saudável do tempo online, promovendo um equilíbrio entre a vida digital e o bem-estar mental.` },
+
+  { id:14, q:"Como as tecnologias digitais influenciam o desenvolvimento infantil?",
+    a:`As tecnologias digitais têm um impacto significativo no desenvolvimento infantil, afetando áreas como a aprendizagem, a socialização e o comportamento. Por um lado, estas tecnologias podem promover o desenvolvimento cognitivo ao oferecer recursos educativos interativos e envolventes. No entanto, o uso excessivo ou inadequado de tecnologias pode prejudicar o desenvolvimento social e emocional das crianças, levando ao isolamento e à diminuição de interações face a face. A exposição prolongada a ecrãs também está associada a problemas de atenção e distúrbios do sono. A monitorização e o equilíbrio no uso de tecnologias são essenciais para garantir um impacto positivo no desenvolvimento infantil.` },
+
+  { id:15, q:"Como as tecnologias podem apoiar o envelhecimento saudável?",
+    a:`As tecnologias têm um papel cada vez mais importante no envelhecimento saudável, oferecendo ferramentas que promovem a saúde física e mental dos idosos. Dispositivos como aplicações de monitorização de saúde, sensores de segurança e plataformas de socialização online podem ajudar os idosos a manter a sua autonomia, a qualidade de vida e o bem-estar emocional. As tecnologias também facilitam o acesso a cuidados de saúde e ao apoio social, permitindo que os idosos se mantenham conectados com a sua rede de suporte. Psicólogos podem ajudar a desenvolver intervenções tecnológicas que sejam fáceis de usar e personalizadas para as necessidades da população mais velha, garantindo que o envelhecimento saudável seja promovido de forma inclusiva.` },
+
+  { id:16, q:"Como as tecnologias podem ser usadas para apoiar indivíduos com perturbações do espectro do autismo?",
+    a:`As tecnologias digitais podem ser uma ferramenta poderosa para apoiar indivíduos com perturbações do espectro do autismo ao oferecer plataformas de comunicação que facilitam a expressão emocional e socialização. Aplicações interativas, como aquelas baseadas em realidade aumentada ou realidade virtual, podem ser usadas para treinar competências sociais e promover a autonomia de indivíduos com autismo em ambientes simulados e controlados. Estas ferramentas ajudam a reduzir a ansiedade em situações novas e a facilitar a integração social, oferecendo um ambiente de aprendizagem personalizado.` },
+
+  { id:17, q:"Como garantir a gestão ética de dados pessoais?",
+    a:`A gestão ética de dados pessoais envolve a aplicação de princípios de privacidade, transparência e consentimento informado. Para garantir que os dados pessoais sejam tratados de forma ética, é essencial que os utilizadores compreendam como os seus dados são recolhidos, armazenados e utilizados. Psicólogos podem contribuir para este processo ao desenvolver políticas de proteção de dados que respeitem a privacidade dos indivíduos, garantindo que os utilizadores forneçam consentimento de forma informada e que possam retirar o seu consentimento a qualquer momento. Também é fundamental educar os utilizadores sobre os seus direitos digitais e garantir que as empresas cumpram as leis de proteção de dados, como o Regulamento Geral sobre a Proteção de Dados (RGPD).` },
+
+  { id:18, q:"Como o Big Data pode ser relevante para a Psicologia?",
+    a:`O Big Data é relevante para a Psicologia porque permite a análise de grandes volumes de dados comportamentais, fornecendo insights profundos sobre padrões de comportamento, tendências sociais e interações humanas. Com Big Data, psicólogos podem estudar de forma mais precisa como as pessoas se comportam em diferentes contextos, identificar fatores preditivos de saúde mental e desenvolver intervenções mais personalizadas. No entanto, o uso de Big Data deve ser acompanhado de princípios éticos rigorosos, como a proteção de dados pessoais e a obtenção de consentimento informado, para garantir que os resultados sejam utilizados de forma responsável.` },
+
+  { id:19, q:"Como os princípios de psicologia comportamental são aplicados na criação de ambientes online viciantes?",
+    a:`Os princípios de psicologia comportamental são frequentemente aplicados na criação de ambientes online viciantes, utilizando técnicas de reforço intermitente (recompensas imprevisíveis) e gamificação para manter os utilizadores envolvidos. Elementos como notificações, likes e recompensas aleatórias são desenhados para ativar os sistemas de recompensa do cérebro, gerando dopamina e incentivando a repetição do comportamento. Esta aplicação de reforço positivo e intermitente leva os utilizadores a voltar repetidamente às plataformas, criando uma dependência digital. A Psicologia comportamental pode ajudar a identificar estes padrões e a desenvolver intervenções que promovam um uso mais consciente e saudável.` },
+
+  { id:20, q:"Como os psicólogos podem auxiliar empresas a desenvolver políticas éticas de privacidade de dados?",
+    a:`Psicólogos podem auxiliar as empresas a desenvolver políticas éticas de privacidade de dados ao garantir que as práticas empresariais respeitam a autonomia e a privacidade dos utilizadores. Psicólogos podem avaliar como as empresas recolhem e processam os dados dos utilizadores, identificando práticas que possam ser percebidas como invasivas ou manipulativas. Além disso, podem ajudar a educar os utilizadores sobre as suas escolhas e direitos em relação à privacidade de dados, promovendo transparência e consentimento informado nas interações digitais. Ao aplicar princípios de ética e deontologia, os psicólogos garantem que as políticas de privacidade não comprometem o bem-estar dos utilizadores.` },
+
+  { id:21, q:"De que forma a Psicologia pode contribuir para o design de intervenções educativas digitais inclusivas?",
+    a:`A Psicologia pode contribuir para o design de intervenções educativas digitais inclusivas ao aplicar conhecimentos sobre diversidade cognitiva e comportamental. Psicólogos podem ajudar a criar materiais que sejam acessíveis a diferentes estilos de aprendizagem e que considerem necessidades especiais, como dificuldades de leitura, visão ou audição. Além disso, a Psicologia pode orientar o desenvolvimento de plataformas interativas que promovam a autonomia dos utilizadores, garantindo que ninguém seja excluído devido a barreiras tecnológicas ou pedagógicas. As intervenções educativas inclusivas devem ser personalizáveis, respeitando a individualidade de cada utilizador.` },
+
+  { id:22, q:"De que forma a Psicologia pode influenciar políticas públicas na era digital?",
+    a:`A Psicologia pode influenciar políticas públicas na era digital ao fornecer dados científicos sobre o impacto das tecnologias no comportamento humano e ao ajudar a formular regulamentações que protejam o bem-estar psicológico dos cidadãos. Psicólogos podem atuar como consultores no desenvolvimento de políticas que promovam a privacidade, a segurança online e a equidade no acesso às tecnologias. Além disso, podem colaborar com governos para criar programas de educação digital que aumentem a literacia digital e previnam os efeitos negativos do uso excessivo de tecnologia.` },
+
+  { id:23, q:"De que forma o Big Data influencia a investigação em Psicologia?",
+    a:`O Big Data tem um impacto significativo na investigação em Psicologia, pois oferece acesso a grandes volumes de dados que permitem análises mais precisas e detalhadas dos comportamentos humanos. Com o uso de Big Data, os psicólogos podem identificar padrões comportamentais em larga escala, o que pode levar a descobertas mais rápidas e a teorias mais robustas. No entanto, a utilização de Big Data também levanta questões éticas relacionadas com a privacidade e a segurança dos dados, o que requer uma abordagem cuidadosa e a implementação de normas éticas rigorosas para garantir a proteção dos indivíduos envolvidos na investigação.` },
+
+  { id:24, q:"De que maneira a literacia digital pode ser uma ferramenta de empoderamento social?",
+    a:`A literacia digital é uma poderosa ferramenta de empoderamento social, pois capacita as pessoas a aceder, compreender e utilizar as tecnologias digitais de forma eficaz. Ao adquirir competências de navegação segura, pensamento crítico e avaliação de fontes, os indivíduos podem participar mais ativamente na sociedade digital, expressando as suas opiniões e defendendo os seus direitos. A literacia digital também promove a autonomia e a inclusão, permitindo que grupos marginalizados acedam a oportunidades educativas e económicas, diminuindo as desigualdades. Psicólogos podem ajudar a desenvolver programas inclusivos de literacia digital que visem populações vulneráveis, promovendo o empoderamento de todas as camadas sociais.` },
+
+  { id:25, q:"De que maneira a transição digital impacta a saúde psicológica?",
+    a:`A transição digital tem um impacto significativo na saúde psicológica, tanto de forma positiva quanto negativa. Por um lado, as tecnologias digitais oferecem ferramentas para o autocuidado e a gestão da saúde mental, como aplicações de meditação ou teleterapia. No entanto, também podem gerar stress e ansiedade, especialmente devido à sobrecarga de informações e à pressão para estar constantemente disponível. Além disso, o uso excessivo de tecnologia pode levar à dependência digital, ao isolamento social e a distúrbios no sono, fatores que afetam diretamente o bem-estar psicológico. Psicólogos têm a capacidade de intervir nestas questões, promovendo um equilíbrio saudável entre o uso digital e o bem-estar mental.` },
+
+  { id:26, q:"De que maneira os psicólogos podem colaborar na criação de algoritmos transparentes e justos?",
+    a:`Psicólogos podem colaborar com programadores e designers na criação de algoritmos transparentes e justos ao trazer uma compreensão mais profunda sobre os preconceitos cognitivos e sociais que podem ser incorporados nos algoritmos. Psicólogos podem ajudar a identificar vieses que afetam a tomada de decisão automatizada e garantir que os sistemas algorítmicos respeitem os princípios de equidade e não discriminação. Além disso, a Psicologia pode contribuir para o desenvolvimento de interfaces transparentes, onde os utilizadores compreendam como e por que motivo os algoritmos tomam determinadas decisões, promovendo a confiança nos sistemas digitais.` },
+
+  { id:27, q:"O que é resiliência digital e como promovê-la?",
+    a:`A resiliência digital refere-se à capacidade de um indivíduo enfrentar e superar os desafios e riscos associados ao ambiente digital. Esta competência envolve a habilidade de lidar com desinformação, ataques cibernéticos e pressões sociais no mundo online. Para promover a resiliência digital, é necessário investir em educação para a literacia digital, oferecendo às pessoas as ferramentas necessárias para navegar com segurança no mundo digital. Ensinar competências de regulação emocional, desenvolver pensamento crítico e promover uma cultura de apoio online são medidas eficazes para aumentar a resiliência digital, permitindo que os indivíduos enfrentem as adversidades sem comprometer o seu bem-estar.` },
+
+  { id:28, q:"Por que é importante promover a literacia digital?",
+    a:`A literacia digital é crucial porque capacita os indivíduos a navegar de forma crítica e segura no mundo digital. Sem estas competências, os utilizadores ficam mais vulneráveis a riscos como desinformação, fraudes e ataques de privacidade. Promover a literacia digital permite que as pessoas compreendam como as plataformas digitais funcionam, que avaliem a credibilidade das informações e que tomem decisões informadas e seguras no uso da tecnologia. A educação para a literacia digital também ensina estratégias para gerir o tempo online, evitando o uso excessivo de dispositivos, e promove comportamentos éticos no ambiente digital.` },
+
+  { id:29, q:"Quais estratégias são eficazes na prevenção de distúrbios associados ao uso digital?",
+    a:`A prevenção de distúrbios associados ao uso digital envolve a promoção de hábitos saudáveis no uso das tecnologias. Estratégias eficazes incluem a limitação do tempo de uso, a definição de horários específicos para interações digitais e a criação de espaços sem tecnologia para promover o equilíbrio entre a vida online e offline. Além disso, a educação sobre os riscos do uso excessivo de tecnologia, como o stress, a fadiga mental e a dependência, pode sensibilizar os utilizadores para a necessidade de uma gestão consciente do tempo online. A intervenção precoce em casos de uso excessivo ou de sinais de dependência também é fundamental para prevenir o agravamento dos distúrbios.` },
+
+  { id:30, q:"Quais são as implicações psicológicas do uso de realidade aumentada no dia-a-dia?",
+    a:`O uso de realidade aumentada (RA) no dia-a-dia pode ter várias implicações psicológicas. Por um lado, a RA pode enriquecer a experiência cognitiva ao integrar informações digitais com o mundo real, facilitando a aprendizagem e a tomada de decisões. No entanto, o uso prolongado de RA pode levar a confusão sensorial, sobrecarga cognitiva e dificuldades na separação entre a realidade aumentada e o ambiente físico. Além disso, o uso intensivo de RA em ambientes sociais pode interferir com as interações humanas e contribuir para o isolamento social. Psicólogos podem ajudar a avaliar e minimizar os efeitos adversos da RA, promovendo o seu uso de forma equilibrada e saudável.` },
+
+  { id:31, q:"Quais são as tendências futuras na Psicologia da transição digital?",
+    a:`A Psicologia da transição digital continuará a evoluir à medida que novas tecnologias emergem. Entre as principais tendências estão o uso crescente de inteligência artificial para analisar e prever comportamentos humanos, a integração de Big Data em estudos psicológicos e o desenvolvimento de intervenções online para promover a saúde mental. Outra tendência é a crescente preocupação ética com o impacto das tecnologias nas emoções, comportamentos e interações sociais, o que exigirá dos psicólogos um papel mais ativo na definição de diretrizes éticas para o desenvolvimento de novas tecnologias. Por fim, a realidade virtual e a realidade aumentada continuarão a ser exploradas como ferramentas de treino e intervenção terapêutica.` },
+
+  { id:32, q:"Quais são os benefícios e os perigos psicológicos da gamificação em ambientes digitais?",
+    a:`A gamificação oferece benefícios psicológicos, como o aumento da motivação, o engajamento e a aprendizagem ao introduzir elementos de jogo em contextos não lúdicos, como a educação ou o trabalho. A recompensa imediata e o sentimento de progresso que a gamificação oferece podem aumentar o compromisso com as tarefas. No entanto, há também perigos psicológicos, como a possibilidade de gerar dependência ou fadiga, especialmente quando as recompensas são desenhadas para criar reforço constante. A gamificação mal projetada pode também levar a competitividade excessiva e stress, reduzindo o bem-estar dos utilizadores.` },
+
+  { id:33, q:"Quais são os desafios éticos apresentados pela Inteligência Artificial?",
+    a:`A Inteligência Artificial (IA) apresenta vários desafios éticos, tais como a proteção da privacidade, a garantia de consentimento informado e a prevenção de vieses algorítmicos. Psicólogos podem ajudar a identificar e mitigar os preconceitos incorporados em algoritmos que, se não forem controlados, podem perpetuar discriminação (como diferenças de género ou raça). Além disso, a IA levanta questões sobre a autonomia dos indivíduos, visto que muitas vezes influencia decisões sem o conhecimento completo do utilizador. A Psicologia pode contribuir para o desenvolvimento de diretrizes éticas que assegurem que os sistemas de IA respeitam os direitos humanos e são implementados de forma responsável e transparente.` },
+
+  { id:34, q:"Quais são os desafios psicológicos impostos pelo trabalho remoto e como superá-los?",
+    a:`O trabalho remoto impõe vários desafios psicológicos, como o isolamento social, a dificuldade em manter o equilíbrio entre vida pessoal e profissional e o aumento dos níveis de stress e ansiedade. A falta de interação presencial pode levar a sentimentos de solidão e a uma diminuição do sentimento de pertença à organização. Para superar estes desafios, psicólogos podem ajudar a desenvolver estratégias de autocuidado, como a criação de rotinas diárias, a definição de limites claros entre o trabalho e a vida pessoal e a promoção de atividades de socialização online para reforçar o bem-estar emocional dos trabalhadores remotos.` },
+
+  { id:35, q:"Quais são os principais desafios comportamentais na era digital?",
+    a:`Entre os principais desafios comportamentais na era digital destacam-se a gestão da privacidade, a superação da distração e a multitarefa. As plataformas digitais, como as redes sociais e os aplicativos de mensagens, estão desenhadas para capturar a atenção dos utilizadores, o que pode levar a uma perda de foco e a dificuldades em manter a produtividade. Outro desafio é o equilíbrio entre a vida digital e a vida offline, pois o uso excessivo da tecnologia pode interferir em relações sociais, descanso e lazer. A Psicologia oferece estratégias para lidar com estes desafios, como o estabelecimento de limites de uso, o desenvolvimento de habilidades de autocontrolo e a promoção de uma utilização mais consciente das tecnologias.` },
+
+  { id:36, q:"Quais são os riscos psicológicos associados ao uso excessivo de tecnologias digitais?",
+    a:`O uso excessivo de tecnologias digitais está associado a vários riscos psicológicos, incluindo ansiedade, depressão, fadiga mental e isolamento social. A dependência de dispositivos digitais pode interferir na capacidade de manter relações presenciais e pode levar ao burnout digital, um estado de exaustão provocado pelo uso prolongado e intenso de tecnologias. Além disso, o uso excessivo pode afetar a autoestima devido à comparação social em plataformas digitais e causar distúrbios do sono devido à exposição prolongada à luz azul dos ecrãs. Limitar o tempo de uso e promover estratégias de autocontrolo são fundamentais para mitigar estes riscos.` },
+
+  { id:37, q:"Qual a importância da literacia digital e qual o papel dos psicólogos nesta área?",
+    a:`A literacia digital é fundamental para que os indivíduos possam navegar de forma crítica e segura no mundo digital, evitando riscos como a desinformação, fraudes e a violação da privacidade. Psicólogos desempenham um papel importante ao promover competências digitais que permitem aos utilizadores compreender e avaliar a qualidade das informações, proteger os seus dados pessoais e agir de forma ética online. Programas educativos desenvolvidos por psicólogos podem capacitar as pessoas a tomar decisões informadas, a reconhecer comportamentos manipulativos e a utilizar as tecnologias de forma consciente.` },
+
+  { id:38, q:"Qual a importância do envolvimento comunitário em ambientes digitais?",
+    a:`O envolvimento comunitário nos ambientes digitais é crucial para criar espaços inclusivos, seguros e colaborativos. A participação ativa de comunidades ajuda a construir solidariedade e apoio mútuo em plataformas digitais, promovendo uma cultura de respeito e partilha de conhecimento. Além disso, o envolvimento comunitário pode ser uma ferramenta eficaz para combater a desinformação, prevenir o isolamento social e reduzir o cyberbullying. Psicólogos podem contribuir para este processo ao facilitar a criação de comunidades digitais saudáveis que valorizem o civismo e o respeito mútuo.` },
+
+  { id:39, q:"Qual a relevância da ética no desenvolvimento de sistemas de IA que afetam o comportamento humano?",
+    a:`A ética é de suma importância no desenvolvimento de sistemas de Inteligência Artificial (IA) que afetam o comportamento humano, pois estas tecnologias têm o poder de influenciar decisões, comportamentos e até mesmo valores. Psicólogos podem contribuir para garantir que os sistemas de IA sejam desenvolvidos de forma ética, respeitando a privacidade, evitando a discriminação e garantindo a autonomia dos utilizadores. A transparência e o consentimento informado são fundamentais para garantir que os utilizadores compreendam como a IA está a ser utilizada e como pode influenciar as suas ações, evitando manipulações indevidas.` },
+
+  { id:40, q:"Qual é a importância da análise psicológica das arquiteturas digitais?",
+    a:`A análise psicológica das arquiteturas digitais é essencial para entender como o design dos sistemas digitais influencia o comportamento e as decisões dos utilizadores. Elementos como a usabilidade (facilidade de uso), a acessibilidade (capacidade de acesso por diferentes perfis de utilizadores) e as estratégias persuasivas (como pop-ups ou notificações) podem moldar a forma como os utilizadores interagem com o ambiente digital. Psicólogos podem avaliar se essas arquiteturas promovem comportamentos saudáveis ou se induzem dependência ou frustração. Um exemplo claro é a forma como as redes sociais podem incentivar a comparação social e a busca incessante por validação, afetando o bem-estar emocional dos utilizadores. A ética no design das plataformas é, portanto, crucial para proteger a autonomia e o bem-estar dos utilizadores.` },
+
+  { id:41, q:"Qual é a relação entre o uso das redes sociais e o aumento da ansiedade e depressão?",
+    a:`O uso excessivo de redes sociais está associado a um aumento nos níveis de ansiedade e depressão, especialmente entre adolescentes e jovens adultos. Isto ocorre, em parte, devido à comparação social negativa, onde os utilizadores comparam a sua vida com as versões idealizadas das vidas dos outros, levando a sentimentos de inadequação e baixa autoestima. Além disso, a pressão para manter uma presença online e as interações superficiais podem gerar stress e solidão. O ciclo de feedback social imediato, como os "gostos" e os comentários, pode criar uma dependência de validação externa, contribuindo para a instabilidade emocional.` },
+
+  { id:42, q:"Qual é o papel da Psicologia na cibersegurança?",
+    a:`A Psicologia tem um papel essencial na cibersegurança ao estudar como os comportamentos humanos criam vulnerabilidades no ambiente digital. Psicólogos analisam as razões pelas quais os utilizadores caem em esquemas de phishing, negligenciam boas práticas de segurança ou adotam comportamentos de risco online. Além disso, podem desenvolver programas educativos e de formação para sensibilizar os utilizadores para os riscos e promover comportamentos seguros e resilientes no ambiente digital. Ao compreender as motivações e atitudes dos indivíduos em relação à cibersegurança, os psicólogos podem contribuir para a criação de sistemas mais seguros, minimizando o erro humano.` },
+
+  { id:43, q:"Qual o impacto das arquiteturas digitais manipulativas na autonomia dos utilizadores?",
+    a:`Arquiteturas digitais manipulativas, como aquelas que utilizam dark patterns (estratégias de design que induzem o utilizador a tomar decisões sem o seu consentimento pleno), podem comprometer a autonomia dos utilizadores ao influenciar os seus comportamentos de forma subliminar. Estas táticas podem levar a decisões impulsivas, como a compra não intencional de produtos ou a partilha inadvertida de informações pessoais. A Psicologia pode ajudar a identificar estes padrões manipulativos e a promover interfaces de utilizador que respeitem a autonomia e os direitos dos utilizadores, incentivando escolhas informadas e éticas.` },
+
+  { id:44, q:"Qual o impacto das redes sociais na identidade e interações sociais?",
+    a:`As redes sociais têm um impacto profundo na construção da identidade e nas interações sociais. Por um lado, oferecem uma plataforma para a expressão pessoal e a criação de comunidades, facilitando a comunicação e a conexão entre indivíduos com interesses comuns. No entanto, também podem levar à comparação social negativa, onde os utilizadores comparam as suas vidas com as imagens idealizadas que outros apresentam online, o que pode causar baixa autoestima, ansiedade e isolamento. Além disso, as interações nas redes sociais tendem a ser menos profundas e mais superficiais, o que pode afetar a qualidade das relações interpessoais.` },
+
+  { id:45, q:"Qual o impacto das tecnologias digitais na educação?",
+    a:`As tecnologias digitais transformaram a educação ao permitir novas formas de aprendizagem, acesso a recursos ilimitados e a personalização do ensino. Plataformas digitais e ferramentas de aprendizagem online oferecem a possibilidade de adaptar os conteúdos às necessidades de cada aluno, promovendo uma aprendizagem mais autónoma. No entanto, também existem desafios significativos, como a distração causada pela multiplicidade de dispositivos e a necessidade de garantir que todos os alunos tenham acesso equitativo às tecnologias. A literacia digital tornou-se uma competência essencial para os alunos e professores, permitindo a utilização eficaz das tecnologias no processo educativo.` },
+
+  { id:46, q:"Qual o impacto das tecnologias digitais no desenvolvimento de competências sociais em crianças?",
+    a:`As tecnologias digitais têm uma influência mista no desenvolvimento das competências sociais em crianças. Por um lado, permitem que as crianças desenvolvam competências comunicacionais ao interagir com pares através de plataformas digitais, o que pode promover conexões sociais e até aumentar a colaboração em ambientes virtuais. No entanto, o uso excessivo de tecnologias digitais pode reduzir as interações face a face, fundamentais para o desenvolvimento de competências como a empatia, a resolução de conflitos e a comunicação não verbal. É importante que o uso de tecnologias seja moderado e acompanhado de oportunidades de socialização no mundo real, para que as crianças desenvolvam um equilíbrio saudável de competências sociais.` },
+
+  { id:47, q:"Qual o papel da Psicologia na análise do impacto psicológico das campanhas de desinformação online?",
+    a:`A Psicologia tem um papel fundamental na análise do impacto psicológico das campanhas de desinformação online. A desinformação pode provocar confusão, ansiedade e desconfiança, afetando a perceção da realidade e a tomada de decisão das pessoas. Psicólogos podem estudar como as pessoas processam informações falsas e identificar os fatores que as tornam vulneráveis à aceitação de fake news. Além disso, podem desenvolver intervenções educativas que aumentem o pensamento crítico e ajudem a mitigar os efeitos psicológicos negativos da desinformação, promovendo uma maior resiliência cognitiva face às manipulações digitais.` },
+
+  { id:48, q:"Qual o papel da Psicologia na prevenção do cyberbullying?",
+    a:`A Psicologia tem um papel crucial na prevenção do cyberbullying, ajudando a entender as dinâmicas psicológicas por trás deste comportamento e desenvolvendo estratégias de intervenção. Psicólogos podem trabalhar com escolas, famílias e comunidades para criar programas de sensibilização que promovam a empatia, o respeito e a regulação emocional online. Além disso, é importante oferecer apoio psicológico tanto às vítimas quanto aos perpetradores, para prevenir os danos a longo prazo causados pelo cyberbullying e promover um ambiente online mais saudável e respeitador.` },
+
+  { id:49, q:"Qual o papel da Psicologia no combate à desinformação?",
+    a:`A Psicologia é fundamental no combate à desinformação ao estudar os mecanismos psicológicos que levam as pessoas a acreditar em informações falsas ou manipuladoras. Preconceitos cognitivos, como o viés de confirmação, tornam as pessoas mais suscetíveis a aceitar informações que reforçam as suas crenças pré-existentes. Psicólogos podem desenvolver estratégias educativas que incentivem o pensamento crítico e a literacia digital, capacitando os indivíduos a verificar fontes e a resistir à influência de fake news. Através de intervenções educativas e campanhas de sensibilização, a Psicologia pode reduzir a propagação de desinformação e fortalecer a resiliência cognitiva das pessoas.` },
+
+  { id:50, q:"Qual o papel dos psicólogos na adaptação a novas tecnologias?",
+    a:`Psicólogos têm um papel crucial na facilitação da adaptação de indivíduos e organizações a novas tecnologias. O processo de adaptação pode ser acompanhado de resistência e ansiedade devido ao desconhecimento ou ao receio de falhar no uso da tecnologia. Psicólogos podem avaliar e intervir nos fatores psicológicos que afetam a aceitação tecnológica, como a autoeficácia, o medo de mudança e o stress tecnológico. Com base nestas avaliações, os psicólogos podem desenvolver estratégias de formação e suporte emocional que ajudam a integrar a tecnologia de forma positiva na vida pessoal e profissional, promovendo uma transição saudável para o uso de novas ferramentas digitais.` },
+];
+
+/* ---------- Utilidades ---------- */
+const $ = (sel, root=document)=>root.querySelector(sel);
+const $$ = (sel, root=document)=>Array.from(root.querySelectorAll(sel));
+const clamp = (n, a, b)=>Math.max(a, Math.min(b,n));
+const now = ()=>Date.now();
+const dayMs = 24*60*60*1000;
+
+function todayKey(){
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+/* Stopwords PT (pequena lista pragmática) */
+const STOP = new Set([
+  "a","o","os","as","um","uma","uns","umas","de","do","da","dos","das","e","ou","em","no","na","nos","nas",
+  "para","por","com","sem","que","como","ao","à","às","aos","se","sua","suas","seu","seus","são","ser","é",
+  "nao","não","mais","menos","muito","muita","muitos","muitas","este","esta","estes","estas","isso","isto",
+  "também","entre","sobre","onde","quando","quanto","qual","quais","porque","porquê","motivo","forma",
+  "uma","é","ao","à","dos","das","num","numa","nuns","numas","há","foi","sendo","será","podem","pode",
+  "pelo","pela","pelos","pelas","deste","desta","destes","destas","nessa","nesse","nesses","nessas"
+]);
+
+function normText(s){
+  return (s||"")
+    .toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+    .replace(/[^a-z0-9\s-]/g," ")
+    .replace(/\s+/g," ")
+    .trim();
+}
+function words(s){
+  const t = normText(s);
+  if(!t) return [];
+  return t.split(" ").filter(w=>w.length>=3 && !STOP.has(w));
+}
+function topKeywords(text, n=8){
+  const freq = new Map();
+  for(const w of words(text)){
+    freq.set(w, (freq.get(w)||0)+1);
+  }
+  return [...freq.entries()]
+    .sort((a,b)=>b[1]-a[1])
+    .slice(0,n)
+    .map(([w])=>w);
+}
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+function shuffle(a){
+  const arr = a.slice();
+  for(let i=arr.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]]=[arr[j],arr[i]];
+  }
+  return arr;
+}
+function uniq(arr){
+  const s=new Set(); const out=[];
+  for(const x of arr){ if(!s.has(x)){ s.add(x); out.push(x); } }
+  return out;
+}
+
+/* ---------- Áudio subtil (opcional) ---------- */
+function beep(freq=660, dur=0.04, type="sine", vol=0.03){
+  if(!state.settings.sound) return;
+  try{
+    const ctx = new (window.AudioContext||window.webkitAudioContext)();
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type = type;
+    o.frequency.value = freq;
+    g.gain.value = vol;
+    o.connect(g); g.connect(ctx.destination);
+    o.start();
+    o.stop(ctx.currentTime + dur);
+    o.onended = ()=>ctx.close();
+  }catch(e){}
+}
+
+/* ---------- Estado + Persistência ---------- */
+const KEY = "ptd_missao_v1";
+const defaultDeck = ()=> {
+  const deck = {};
+  for(const it of BANK){
+    deck[it.id] = {
+      id: it.id,
+      reps: 0,        // repetições bem-sucedidas
+      ef: 2.5,        // ease factor
+      interval: 0,    // dias
+      due: 0,         // timestamp
+      lapses: 0,      // falhas
+      seen: 0         // vezes mostrado
+    };
+  }
+  return deck;
+};
+
+const state = {
+  mode: "train",
+  current: null,
+  revealed: false,
+  quiz: { correct:0, total:0, locked:false, options:[] },
+  exam: { on:false, idx:0, pack:[], start:0, durationMin:18, locked:false },
+  xp: 0,
+  streak: { lastDay:null, count:0 },
+  settings: { theme:"dark", hints:true, sound:true },
+  deck: defaultDeck()
+};
+
+function load(){
+  const raw = localStorage.getItem(KEY);
+  if(!raw) return;
+  try{
+    const obj = JSON.parse(raw);
+    if(obj && obj.deck){
+      state.deck = obj.deck;
+      state.xp = obj.xp||0;
+      state.streak = obj.streak||state.streak;
+      state.settings = Object.assign(state.settings, obj.settings||{});
+      state.quiz = Object.assign(state.quiz, obj.quiz||{});
+    }
+  }catch(e){}
+}
+function save(){
+  localStorage.setItem(KEY, JSON.stringify({
+    deck: state.deck,
+    xp: state.xp,
+    streak: state.streak,
+    settings: state.settings,
+    quiz: { correct: state.quiz.correct, total: state.quiz.total }
+  }));
+}
+
+function resetAll(){
+  localStorage.removeItem(KEY);
+  location.reload();
+}
+
+/* ---------- Repetição espaçada (SM-2 adaptado) ---------- */
+function sm2Update(card, quality){ // quality 0..3
+  // Converte para a escala clássica 0..5
+  const q = [0,3,4,5][quality] ?? 0;
+
+  // Ajuste EF
+  let ef = card.ef;
+  ef = ef + (0.1 - (5-q)*(0.08 + (5-q)*0.02));
+  ef = clamp(ef, 1.3, 2.8);
+
+  if(q < 3){
+    // falhou / difícil: volta rápido
+    card.reps = 0;
+    card.interval = 1;
+    card.lapses = (card.lapses||0) + 1;
+  } else {
+    card.reps = (card.reps||0) + 1;
+    if(card.reps === 1) card.interval = 1;
+    else if(card.reps === 2) card.interval = 3;
+    else card.interval = Math.round((card.interval||3) * ef);
+  }
+
+  card.ef = ef;
+  card.due = now() + card.interval * dayMs;
+}
+
+/* ---------- Seleção de cartões ---------- */
+function dueIds(){
+  const t = now();
+  return BANK.map(b=>b.id).filter(id => (state.deck[id].due||0) <= t && (state.deck[id].seen||0) > 0);
+}
+function newIds(){
+  return BANK.map(b=>b.id).filter(id => (state.deck[id].seen||0) === 0);
+}
+function masteredIds(){
+  return BANK.map(b=>b.id).filter(id => (state.deck[id].reps||0) >= 4 && (state.deck[id].lapses||0) === 0);
+}
+
+function pickNextTrain(){
+  const due = dueIds();
+  const news = newIds();
+
+  // Prioridade: devidos; senão novos; senão “reforço” (os mais frágeis)
+  if(due.length) return pick(due);
+
+  if(news.length){
+    // Intercalar: se já viu alguns, tenta não deixar só "novos"
+    // (mas aqui sem devidos, damos novos mesmo)
+    return pick(news);
+  }
+
+  // reforço: menor reps + maior lapses
+  const all = BANK.map(b=>b.id);
+  all.sort((a,b)=>{
+    const A=state.deck[a], B=state.deck[b];
+    const sa = (A.reps||0) - 0.6*(A.lapses||0);
+    const sb = (B.reps||0) - 0.6*(B.lapses||0);
+    return sa - sb;
+  });
+  return all[0];
+}
+
+/* ---------- UI helpers ---------- */
+function toast(msg){
+  const t = $("#toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toast._t);
+  toast._t = setTimeout(()=>t.classList.remove("show"), 1700);
+}
+
+function levelFromXP(xp){
+  // crescimento suave
+  return Math.floor(Math.sqrt(xp/120)) + 1;
+}
+
+function bumpStreak(){
+  const tk = todayKey();
+  const last = state.streak.lastDay;
+  if(!last){
+    state.streak.lastDay = tk;
+    state.streak.count = 1;
+    return;
+  }
+  if(last === tk) return;
+
+  const dLast = new Date(last+"T00:00:00");
+  const dNow  = new Date(tk+"T00:00:00");
+  const diffDays = Math.round((dNow - dLast)/dayMs);
+
+  if(diffDays === 1){
+    state.streak.count += 1;
+  }else{
+    state.streak.count = 1;
+  }
+  state.streak.lastDay = tk;
+}
+
+/* ---------- Render geral ---------- */
+function setTheme(){
+  document.documentElement.setAttribute("data-theme", state.settings.theme === "light" ? "light" : "dark");
+  $("#themeLabel").textContent = state.settings.theme === "light" ? "Claro" : "Escuro";
+}
+function updateHeaderStats(){
+  const due = dueIds().length;
+  $("#dueCount").textContent = due;
+  $("#dueCount2").textContent = due;
+  $("#dueHint").textContent = due ? "missões pendentes" : "tudo em dia ✨";
+  const dot = $("#dueDot");
+  dot.className = "dot " + (due===0 ? "good" : (due<=6 ? "warn" : "bad"));
+
+  $("#xp").textContent = state.xp|0;
+  $("#level").textContent = levelFromXP(state.xp);
+  $("#streakLine").textContent = `Sequência: ${state.streak.count||0} dias`;
+
+  const m = masteredIds().length;
+  $("#mastered").textContent = m;
+  $("#masteryBar").style.width = `${Math.round((m/50)*100)}%`;
+
+  $("#newCount").textContent = newIds().length;
+
+  const acc = state.quiz.total ? Math.round((state.quiz.correct/state.quiz.total)*100) : null;
+  $("#quizAcc").textContent = acc===null ? "—" : `${acc}%`;
+
+  renderBadges();
+}
+
+function renderBadges(){
+  const m = masteredIds().length;
+  const due = dueIds().length;
+  const streak = state.streak.count||0;
+  const acc = state.quiz.total ? (state.quiz.correct/state.quiz.total) : 0;
+
+  const defs = [
+    { key:"arranque", label:"🚀 Arranque", on: state.xp>=60, tip:"Primeiros passos dados." },
+    { key:"constancia", label:"🔥 Constância", on: streak>=3, tip:"3 dias seguidos." },
+    { key:"metade", label:"🧭 Metade do mapa", on: m>=25, tip:"25 dominadas." },
+    { key:"mestre", label:"🏆 Mestre PTD", on: m>=50, tip:"50 dominadas." },
+    { key:"zero_due", label:"✨ Tudo em dia", on: due===0 && (m>0 || state.xp>0), tip:"Sem revisões pendentes." },
+    { key:"preciso", label:"🎯 Precisão", on: acc>=0.8 && state.quiz.total>=10, tip:"≥80% no Desafio (10+)." },
+  ];
+
+  const box = $("#badges");
+  box.innerHTML = "";
+  defs.forEach(b=>{
+    const el = document.createElement("div");
+    el.className = "badge" + (b.on ? " on" : "");
+    el.title = b.tip;
+    el.textContent = b.label;
+    box.appendChild(el);
+  });
+}
+
+/* ---------- Modos ---------- */
+function switchMode(mode){
+  state.mode = mode;
+  state.revealed = false;
+  state.quiz.locked = false;
+  state.exam.locked = false;
+  state.exam.on = false;
+
+  $$(".tab").forEach(t=>t.classList.toggle("active", t.dataset.mode===mode));
+  if(mode === "train") startTrain();
+  if(mode === "quiz") startQuiz();
+  if(mode === "exam") startExam();
+}
+
+function startTrain(){
+  const id = pickNextTrain();
+  state.current = id;
+  state.revealed = false;
+  state.deck[id].seen = (state.deck[id].seen||0) + 1;
+  save();
+  renderTrain();
+}
+
+function renderTrain(){
+  const item = BANK.find(x=>x.id===state.current);
+  $("#modeLine").textContent = `Modo Treino • Cartão #${item.id}`;
+  $("#timerLine").textContent = "";
+  $("#qText").textContent = item.q;
+
+  const kw = topKeywords(item.a, 10);
+  const showHints = state.settings.hints;
+
+  const body = $("#mainBody");
+  body.innerHTML = `
+    <div class="hintrow">
+      <div class="chip"><strong>Objetivo:</strong> lembra a ideia central + 3 detalhes</div>
+      <div class="chip"><strong>Dica:</strong> pensa em “definição → mecanismos → intervenção”</div>
+    </div>
+
+    ${showHints ? `
+      <div class="panel">
+        <h4>Pistas (conceitos prováveis)</h4>
+        <div class="hintrow">
+          ${kw.slice(0,8).map(w=>`<div class="chip">${w}</div>`).join("")}
+        </div>
+      </div>
+    ` : ``}
+
+    <div class="panel">
+      <h4>Escreve a tua resposta (rascunho)</h4>
+      <textarea id="trainInput" placeholder="Escreve de forma simples, como se estivesses a explicar a um colega…"></textarea>
+      <div class="small" style="margin-top:8px;">Não precisa de estar perfeita: o importante é <b>tentares lembrar</b> antes de veres a resposta.</div>
+    </div>
+
+    <div class="actions">
+      <div class="btnrow">
+        <button id="revealBtn" class="primary">👁️ Revelar resposta <span class="kbd">Espaço</span></button>
+        <button id="skipBtn">⏭️ Saltar</button>
+      </div>
+      <div class="small">Depois de revelar, escolhe a avaliação que descreve melhor o teu desempenho.</div>
+    </div>
+
+    <div id="afterReveal" style="display:none;">
+      <div class="panel" style="margin-top:14px;">
+        <h4>Resposta de referência</h4>
+        <p>${item.a}</p>
+      </div>
+
+      <div class="panel">
+        <h4>Feedback rápido (palavras-chave)</h4>
+        <div id="feedbackLine" class="hintrow"></div>
+        <div class="small" style="margin-top:8px;" id="feedbackText"></div>
+      </div>
+
+      <div class="actions">
+        <div class="btnrow">
+          <button class="bad"  id="rate0">😵 Não consegui</button>
+          <button class="warn" id="rate1">😬 Quase</button>
+          <button class="good" id="rate2">🙂 Bem</button>
+          <button class="primary" id="rate3">😎 Muito bem</button>
+        </div>
+        <div class="small" id="scheduleLine">Agenda: —</div>
+      </div>
+    </div>
+  `;
+
+  $("#revealBtn").onclick = ()=>revealTrain();
+  $("#skipBtn").onclick = ()=>{
+    toast("Ok — a saltar (sem mexer no agendamento).");
+    beep(380,0.04,"sine",0.02);
+    startTrain();
+    updateHeaderStats();
+  };
+
+  document.onkeydown = (e)=>{
+    if(state.mode!=="train") return;
+    if(e.code==="Space"){
+      e.preventDefault();
+      if(!state.revealed) revealTrain();
+    }
+  };
+}
+
+function revealTrain(){
+  state.revealed = true;
+  const item = BANK.find(x=>x.id===state.current);
+
+  $("#afterReveal").style.display = "block";
+
+  // Feedback por keywords
+  const user = ($("#trainInput").value||"");
+  const refKW = topKeywords(item.a, 12);
+  const userKW = uniq(words(user));
+  const refSet = new Set(refKW);
+  let hit = 0;
+  for(const w of userKW){ if(refSet.has(w)) hit++; }
+  const score = refKW.length ? Math.round((hit/refKW.length)*100) : 0;
+
+  const matched = refKW.filter(w=>userKW.includes(w));
+  const missed = refKW.filter(w=>!userKW.includes(w)).slice(0,8);
+
+  const line = $("#feedbackLine");
+  line.innerHTML = `
+    <div class="chip ${score>=70?"good":score>=40?"warn":"bad"}"><strong>Score:</strong> ${score}%</div>
+    <div class="chip"><strong>Acertaste:</strong> ${matched.length}</div>
+    <div class="chip"><strong>Faltou:</strong> ${missed.length}</div>
+  `;
+
+  $("#feedbackText").textContent =
+    matched.length
+      ? `Boa! Apanhaste conceitos como: ${matched.slice(0,6).join(", ")}.`
+      : `Sem stress — agora foca-te em 3 ideias: definição, riscos, intervenção.`;
+
+  // Agenda mostrado após avaliação
+  $("#scheduleLine").textContent = "Agenda: escolhe a avaliação…";
+
+  $("#rate0").onclick = ()=>rateTrain(0);
+  $("#rate1").onclick = ()=>rateTrain(1);
+  $("#rate2").onclick = ()=>rateTrain(2);
+  $("#rate3").onclick = ()=>rateTrain(3);
+
+  beep(720,0.03,"triangle",0.02);
+  toast("Resposta revelada. Agora avalia-te 👍");
+}
+
+function rateTrain(quality){
+  const id = state.current;
+  const card = state.deck[id];
+  sm2Update(card, quality);
+
+  // XP: reforça honestidade e esforço (não só acerto)
+  const xpGain = [6,10,14,18][quality] ?? 8;
+  state.xp += xpGain;
+
+  bumpStreak();
+
+  // Mensagem + som
+  const msgs = [
+    "Normal. Isto é treino — voltamos já a este cartão.",
+    "Boa! Estava quase. O espaçamento vai ajudar.",
+    "Muito bem! A consolidar.",
+    "Excelente! Isto já começa a ficar automático 😎"
+  ];
+  toast(`+${xpGain} XP • ${msgs[quality] || "Feito!"}`);
+  beep(quality>=2?820:520,0.04,"sine", quality>=2?0.03:0.02);
+
+  // Mostrar próxima revisão
+  const d = new Date(card.due);
+  const when = `${d.getDate()}/${d.getMonth()+1} às ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+  $("#scheduleLine").textContent = `Agenda: próxima revisão em ~${card.interval} dia(s) (${when}).`;
+
+  save();
+  updateHeaderStats();
+
+  // Avança automaticamente após pequeno delay (mantém sensação de fluxo)
+  setTimeout(()=>startTrain(), 700);
+}
+
+/* ---------- Desafio (quiz) ---------- */
+function startQuiz(){
+  state.quiz.locked = false;
+  const id = pickQuizQuestion();
+  state.current = id;
+  state.deck[id].seen = (state.deck[id].seen||0) + 1;
+  save();
+  renderQuiz();
+}
+
+function pickQuizQuestion(){
+  // Preferir as mais frágeis (menos reps, mais lapses) + misturar
+  const ids = BANK.map(b=>b.id);
+  ids.sort((a,b)=>{
+    const A=state.deck[a], B=state.deck[b];
+    const scoreA = (A.reps||0) - 0.7*(A.lapses||0);
+    const scoreB = (B.reps||0) - 0.7*(B.lapses||0);
+    return scoreA - scoreB;
+  });
+  // Escolhe entre o top 18 frágeis para variar
+  return pick(ids.slice(0, Math.min(18, ids.length)));
+}
+
+function makeQuizOptions(item){
+  // Pergunta: escolher o conjunto de palavras-chave mais "compatível".
+  const correctKW = topKeywords(item.a, 6);
+  const distractors = shuffle(BANK.filter(x=>x.id!==item.id)).slice(0,3);
+
+  const options = [
+    { id:"A", kw: correctKW, correct:true },
+    ...distractors.map((d,i)=>({ id:String.fromCharCode(66+i), kw: topKeywords(d.a, 6), correct:false }))
+  ];
+
+  // pequenas mutações para evitar que a correta fique “óbvia”
+  // (mistura 1 keyword aleatória com outra opção)
+  const pool = uniq(distractors.flatMap(d=>topKeywords(d.a, 10)));
+  options[0].kw = shuffle(uniq([...options[0].kw, pick(pool)])).slice(0,6);
+
+  return shuffle(options);
+}
+
+function renderQuiz(){
+  const item = BANK.find(x=>x.id===state.current);
+  $("#modeLine").textContent = `Modo Desafio • Questão #${item.id}`;
+  $("#timerLine").textContent = "";
+  $("#qText").textContent = item.q;
+
+  state.quiz.options = makeQuizOptions(item);
+  state.quiz.locked = false;
+
+  const body = $("#mainBody");
+  body.innerHTML = `
+    <div class="hintrow">
+      <div class="chip"><strong>Regra:</strong> escolhe a opção com as <i>ideias-chave</i> mais certas</div>
+      <div class="chip"><strong>Dica:</strong> procura termos “núcleo” (ex.: privacidade, literacia, vieses…)</div>
+    </div>
+
+    <div class="options" id="options"></div>
+
+    <div class="panel" id="quizExplain" style="display:none;">
+      <h4>Explicação (para fixar)</h4>
+      <p>${item.a}</p>
+    </div>
+
+    <div class="actions">
+      <div class="btnrow">
+        <button id="nextQuiz" class="primary">➡️ Próxima</button>
+        <button id="toTrain">🧠 Voltar ao Treino</button>
+      </div>
+      <div class="small">Pontua pela consistência: melhor fazer 12 desafios curtos do que 1 sessão longa.</div>
+    </div>
+  `;
+
+  const optBox = $("#options");
+  state.quiz.options.forEach((opt, idx)=>{
+    const el = document.createElement("div");
+    el.className = "opt";
+    el.dataset.idx = idx;
+    el.innerHTML = `<strong>Opção ${idx+1}</strong><span>${opt.kw.map(w=>`• ${w}`).join("  ")}</span>`;
+    el.onclick = ()=>chooseQuiz(idx);
+    optBox.appendChild(el);
+  });
+
+  $("#nextQuiz").onclick = ()=>startQuiz();
+  $("#toTrain").onclick = ()=>switchMode("train");
+}
+
+function chooseQuiz(idx){
+  if(state.quiz.locked) return;
+  state.quiz.locked = true;
+
+  const item = BANK.find(x=>x.id===state.current);
+  const options = state.quiz.options;
+  const chosen = options[idx];
+  const optEls = $$("#options .opt");
+
+  // marcar visuais
+  optEls.forEach((el,i)=>{
+    const isCorrect = options[i].correct;
+    el.classList.add(isCorrect ? "correct" : "");
+    if(i===idx && !chosen.correct) el.classList.add("wrong");
+  });
+
+  state.quiz.total += 1;
+
+  if(chosen.correct){
+    state.quiz.correct += 1;
+    state.xp += 10;
+    bumpStreak();
+    toast("✅ Certo! +10 XP");
+    beep(880,0.04,"sine",0.03);
+
+    // Pequeno reforço no agendamento (sem ser tão forte como no treino)
+    const card = state.deck[item.id];
+    // se acertou, dá um empurrão mínimo: reps+1 até 2 e due curto
+    card.reps = Math.min((card.reps||0)+1, 2);
+    card.due = now() + 2*dayMs;
+  }else{
+    state.xp += 4;
+    toast("❌ Quase… vê a explicação e segue. +4 XP");
+    beep(260,0.05,"square",0.02);
+    // Penaliza levemente (para voltar mais cedo)
+    const card = state.deck[item.id];
+    card.lapses = (card.lapses||0) + 1;
+    card.due = now() + 1*dayMs;
+  }
+
+  $("#quizExplain").style.display = "block";
+  save();
+  updateHeaderStats();
+}
+
+/* ---------- Exame (10 questões aleatórias) ---------- */
+function startExam(){
+  state.exam.on = true;
+  state.exam.idx = 0;
+  state.exam.start = now();
+  state.exam.locked = false;
+
+  // escolher 10: priorizar as não dominadas
+  const ids = BANK.map(b=>b.id);
+  ids.sort((a,b)=>{
+    const A=state.deck[a], B=state.deck[b];
+    const ma = (A.reps||0)>=4 ? 1 : 0;
+    const mb = (B.reps||0)>=4 ? 1 : 0;
+    if(ma!==mb) return ma-mb;
+    const sa = (A.reps||0) - 0.7*(A.lapses||0);
+    const sb = (B.reps||0) - 0.7*(B.lapses||0);
+    return sa - sb;
+  });
+  state.exam.pack = shuffle(ids.slice(0, 18)).slice(0, 10);
+  renderExam();
+}
+
+function renderExam(){
+  const id = state.exam.pack[state.exam.idx];
+  const item = BANK.find(x=>x.id===id);
+
+  $("#modeLine").textContent = `Modo Exame • Pergunta ${state.exam.idx+1}/10 (Q#${item.id})`;
+  $("#qText").textContent = item.q;
+
+  const minsLeft = Math.max(0, state.exam.durationMin - Math.floor((now()-state.exam.start)/(60*1000)));
+  $("#timerLine").textContent = `⏳ Tempo: ~${minsLeft} min`;
+
+  const body = $("#mainBody");
+  body.innerHTML = `
+    <div class="hintrow">
+      <div class="chip"><strong>Formato:</strong> resposta escrita</div>
+      <div class="chip"><strong>Meta:</strong> 4–7 linhas com ideias fortes</div>
+      <div class="chip"><strong>Dica:</strong> definição → impacto → intervenção</div>
+    </div>
+
+    <div class="panel">
+      <h4>A tua resposta</h4>
+      <textarea id="examInput" placeholder="Escreve aqui…"></textarea>
+      <div class="small" style="margin-top:8px;">Quando terminares, clica em <b>Corrigir</b> para ver feedback.</div>
+    </div>
+
+    <div class="actions">
+      <div class="btnrow">
+        <button class="primary" id="examCheck">✅ Corrigir</button>
+        <button id="examSkip">⏭️ Passar</button>
+      </div>
+      <div class="small">No exame, o objetivo é simular pressão leve — mas com feedback imediato.</div>
+    </div>
+
+    <div id="examFeedback" style="display:none;">
+      <div class="panel">
+        <h4>Feedback por conceitos</h4>
+        <div id="examChips" class="hintrow"></div>
+        <div class="small" id="examTip" style="margin-top:8px;"></div>
+      </div>
+
+      <div class="panel">
+        <h4>Resposta de referência</h4>
+        <p>${item.a}</p>
+      </div>
+
+      <div class="actions">
+        <div class="btnrow">
+          <button class="warn" id="examHard">😬 Difícil</button>
+          <button class="good" id="examGood">🙂 OK</button>
+          <button class="primary" id="examEasy">😎 Tranquilo</button>
+        </div>
+        <div class="small" id="examProgress">Progresso do exame: ${state.exam.idx+1}/10</div>
+      </div>
+    </div>
+  `;
+
+  $("#examCheck").onclick = ()=>checkExam();
+  $("#examSkip").onclick = ()=>{
+    toast("Passaste esta. Sem stress — segue.");
+    beep(360,0.04,"sine",0.02);
+    nextExam();
+  };
+}
+
+function checkExam(){
+  if(state.exam.locked) return;
+  state.exam.locked = true;
+
+  const id = state.exam.pack[state.exam.idx];
+  const item = BANK.find(x=>x.id===id);
+  const user = ($("#examInput").value||"");
+
+  const refKW = topKeywords(item.a, 14);
+  const userKW = uniq(words(user));
+
+  const refSet = new Set(refKW);
+  let hit = 0;
+  for(const w of userKW){ if(refSet.has(w)) hit++; }
+  const score = refKW.length ? Math.round((hit/refKW.length)*100) : 0;
+
+  const matched = refKW.filter(w=>userKW.includes(w)).slice(0,10);
+  const missed  = refKW.filter(w=>!userKW.includes(w)).slice(0,10);
+
+  const chips = $("#examChips");
+  chips.innerHTML = `
+    <div class="chip ${score>=70?"good":score>=40?"warn":"bad"}"><strong>Score:</strong> ${score}%</div>
+    <div class="chip"><strong>Apanhados:</strong> ${matched.length}</div>
+    <div class="chip"><strong>Por incluir:</strong> ${missed.length}</div>
+    ${matched.slice(0,6).map(w=>`<div class="chip good">${w}</div>`).join("")}
+    ${missed.slice(0,6).map(w=>`<div class="chip">${w}</div>`).join("")}
+  `;
+
+  $("#examTip").textContent =
+    score>=70 ? "Muito bem: estrutura sólida e conceitos fortes."
+    : score>=40 ? "Boa base — tenta acrescentar mais 2–3 conceitos centrais."
+    : "Sugestão: reescreve mentalmente em 3 passos (definição → riscos → intervenção).";
+
+  $("#examFeedback").style.display = "block";
+  beep(score>=70?900:score>=40?640:300,0.05,"sine",0.03);
+
+  // Avaliação rápida que alimenta o SM-2
+  $("#examHard").onclick = ()=>finishExamRating(1);
+  $("#examGood").onclick = ()=>finishExamRating(2);
+  $("#examEasy").onclick = ()=>finishExamRating(3);
+}
+
+function finishExamRating(quality){
+  const id = state.exam.pack[state.exam.idx];
+  const card = state.deck[id];
+
+  // no exame, convertemos hard/good/easy para SM-2 (sem "0")
+  sm2Update(card, quality);
+
+  const gain = [0,10,14,18][quality] || 12;
+  state.xp += gain;
+  bumpStreak();
+
+  toast(`Exame: +${gain} XP • pergunta registada`);
+  beep(quality>=2?820:520,0.04,"triangle",0.03);
+
+  save();
+  updateHeaderStats();
+  nextExam();
+}
+
+function nextExam(){
+  state.exam.locked = false;
+  state.exam.idx += 1;
+
+  if(state.exam.idx >= state.exam.pack.length){
+    // fim
+    const mins = Math.round((now()-state.exam.start)/(60*1000));
+    toast(`🏁 Exame concluído em ~${mins} min!`);
+    beep(980,0.06,"sine",0.03);
+
+    // bónus por concluir
+    state.xp += 25;
+    save();
+    updateHeaderStats();
+
+    // volta ao treino para consolidar
+    setTimeout(()=>switchMode("train"), 900);
+    return;
+  }
+  renderExam();
+}
+
+/* ---------- Definições / Modal ---------- */
+function openModal(){ $("#modalBack").classList.add("show"); }
+function closeModal(){ $("#modalBack").classList.remove("show"); }
+
+function setHintsLabel(){
+  $("#hintsLabel").textContent = state.settings.hints ? "Ligadas" : "Desligadas";
+}
+function setSoundLabel(){
+  $("#soundLabel").textContent = state.settings.sound ? "Ligados" : "Desligados";
+}
+
+/* Export / Import */
+function download(filename, text){
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([text], {type:"application/json"}));
+  a.download = filename;
+  a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 500);
+}
+function importJson(){
+  const inp = document.createElement("input");
+  inp.type = "file";
+  inp.accept = "application/json";
+  inp.onchange = ()=>{
+    const file = inp.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = ()=>{
+      try{
+        const obj = JSON.parse(reader.result);
+        if(obj && obj.deck){
+          state.deck = obj.deck;
+          state.xp = obj.xp||0;
+          state.streak = obj.streak||state.streak;
+          state.settings = Object.assign(state.settings, obj.settings||{});
+          state.quiz.correct = obj.quiz?.correct || 0;
+          state.quiz.total   = obj.quiz?.total || 0;
+          save();
+          setTheme();
+          setHintsLabel();
+          setSoundLabel();
+          updateHeaderStats();
+          toast("Progresso importado ✅");
+          beep(860,0.05,"sine",0.03);
+          closeModal();
+          // re-render modo atual
+          switchMode(state.mode);
+        }else{
+          toast("Ficheiro inválido.");
+          beep(260,0.05,"square",0.02);
+        }
+      }catch(e){
+        toast("Erro ao importar.");
+        beep(260,0.05,"square",0.02);
+      }
+    };
+    reader.readAsText(file);
+  };
+  inp.click();
+}
+
+/* ---------- Inicialização ---------- */
+function bindUI(){
+  // tabs
+  $$(".tab").forEach(t=>{
+    t.onclick = ()=>switchMode(t.dataset.mode);
+    t.onkeydown = (e)=>{
+      if(e.key==="Enter" || e.key===" "){
+        e.preventDefault();
+        switchMode(t.dataset.mode);
+      }
+    };
+  });
+
+  // keyboard shortcuts
+  window.addEventListener("keydown", (e)=>{
+    if($("#modalBack").classList.contains("show")) return;
+    if(e.key==="1") switchMode("train");
+    if(e.key==="2") switchMode("quiz");
+    if(e.key==="3") switchMode("exam");
+  });
+
+  // pills
+  $("#pillDue").onclick = ()=>switchMode("train");
+  $("#pillLevel").onclick = ()=>openModal();
+  $("#btnSettings").onclick = ()=>openModal();
+
+  // modal
+  $("#closeModal").onclick = closeModal;
+  $("#modalBack").onclick = (e)=>{ if(e.target.id==="modalBack") closeModal(); };
+
+  $("#toggleTheme").onclick = ()=>{
+    state.settings.theme = (state.settings.theme==="dark") ? "light" : "dark";
+    setTheme();
+    save();
+    toast(`Tema: ${state.settings.theme==="light"?"Claro":"Escuro"}`);
+  };
+
+  $("#toggleHints").onclick = ()=>{
+    state.settings.hints = !state.settings.hints;
+    setHintsLabel();
+    save();
+    toast(`Pistas: ${state.settings.hints?"Ligadas":"Desligadas"}`);
+    // re-render modo atual
+    switchMode(state.mode);
+  };
+
+  $("#toggleSound").onclick = ()=>{
+    state.settings.sound = !state.settings.sound;
+    setSoundLabel();
+    save();
+    toast(`Sons: ${state.settings.sound?"Ligados":"Desligados"}`);
+    beep(740,0.04,"sine",0.02);
+  };
+
+  $("#resetAll").onclick = ()=>{
+    if(confirm("Reset total? Vais perder progresso, XP e agenda.")){
+      resetAll();
+    }
+  };
+
+  $("#exportData").onclick = ()=>{
+    const data = localStorage.getItem(KEY) || "{}";
+    download("ptd_missao_progresso.json", data);
+    toast("Exportado ✅");
+    beep(820,0.04,"sine",0.03);
+  };
+  $("#importData").onclick = ()=>{
+    importJson();
+  };
+}
+
+function init(){
+  load();
+  setTheme();
+  setHintsLabel();
+  setSoundLabel();
+  updateHeaderStats();
+  bindUI();
+
+  // modo inicial
+  switchMode("train");
+}
+
+init();
+</script>
+</body>
+</html>

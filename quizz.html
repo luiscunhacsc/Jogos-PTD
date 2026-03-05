@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trivia de Ciberpsicologia - Autoavaliação</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap');
+
+        :root {
+            --bg-color: #1e1b4b;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --text-dark: #1f2937;
+            --text-light: #f3f4f6;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: var(--card-bg);
+            color: var(--text-dark);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 800px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        h1 {
+            color: var(--primary);
+            font-weight: 900;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+
+        p.subtitle {
+            color: #6b7280;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+
+        /* Input screen */
+        .setup-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .setup-section input {
+            padding: 15px;
+            font-size: 1.2rem;
+            border: 2px solid #cbd5e1;
+            border-radius: 12px;
+            width: 100px;
+            text-align: center;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .setup-section input:focus {
+            border-color: var(--primary);
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .btn:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        /* Game screen */
+        .game-section {
+            display: none;
+        }
+
+        .progress {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #6b7280;
+            margin-bottom: 20px;
+        }
+
+        .question-card {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+        }
+
+        .answer-text {
+            display: none;
+            font-size: 1.1rem;
+            color: #4b5563;
+            line-height: 1.6;
+            padding-top: 20px;
+            border-top: 2px dashed #cbd5e1;
+            text-align: left;
+            animation: fadeIn 0.5s;
+        }
+
+        .evaluation-buttons {
+            display: none;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .eval-btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .eval-btn:hover { transform: scale(1.05); }
+        .eval-knew { background: var(--success); }
+        .eval-idea { background: var(--warning); }
+        .eval-clueless { background: var(--danger); }
+
+        /* End screen */
+        .end-section {
+            display: none;
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: 900;
+            margin: 0 auto 20px auto;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div id="setup-screen" class="setup-section">
+            <h1>🧠 PTD Trivia: Autoavaliação</h1>
+            <p class="subtitle">Baseado no Banco de Questões ISMT 2025-26. Tenta responder antes de revelar a solução e avalia a tua própria resposta!</p>
+            
+            <label for="num-questions" style="font-weight: 700; font-size: 1.2rem; color: #4b5563;">Quantas perguntas queres treinar?</label>
+            <input type="number" id="num-questions" min="1" max="50" value="10">
+            <small style="color: #9ca3af;">(Máximo: 50)</small>
+
+            <button class="btn" onclick="startGame()">COMEÇAR O TREINO</button>
+        </div>
+
+        <div id="game-screen" class="game-section">
+            <div class="progress" id="progress-text">Pergunta 1 de 10</div>
+            
+            <div class="question-card">
+                <div class="question-text" id="question-text">A carregar pergunta...</div>
+                <button class="btn" id="reveal-btn" onclick="revealAnswer()">Ver Resposta 👀</button>
+                <div class="answer-text" id="answer-text">Aqui aparece a resposta.</div>
+            </div>
+
+            <div class="evaluation-buttons" id="evaluation-buttons">
+                <button class="eval-btn eval-knew" onclick="registerScore(2)">😎 Sabia perfeitamente!</button>
+                <button class="eval-btn eval-idea" onclick="registerScore(1)">🤔 Tinha uma ideia</button>
+                <button class="eval-btn eval-clueless" onclick="registerScore(0)">😵 Não fazia ideia</button>
+            </div>
+        </div>
+
+        <div id="end-screen" class="end-section">
+            <h1>Treino Concluído! 🎉</h1>
+            <p class="subtitle">Aqui está o teu nível de preparação atual:</p>
+            <div class="score-circle" id="final-score">0%</div>
+            <h2 id="feedback-message" style="margin-bottom: 20px; color: #1f2937;"></h2>
+            <button class="btn" onclick="location.reload()">NOVO TREINO</button>
+        </div>
+    </div>
+
+    <script>
+        // O Banco de Questões Integral
+        const questoesPTD = [
+            { q: "Como a ética e deontologia são preservadas na era digital?", a: "Pela criação e aplicação de normas e diretrizes que assegurem o respeito pela privacidade, proteção de dados e direitos dos utilizadores. Os psicólogos integram estes princípios desde a recolha de dados até à intervenção (ex: teleterapia), garantindo confidencialidade e consentimento informado." },
+            { q: "Como a Psicologia aborda os fatores humanos em sistemas digitais?", a: "Estudando como os indivíduos interagem com os sistemas digitais para otimizar a usabilidade, acessibilidade e satisfação, considerando as suas limitações cognitivas e emocionais para minimizar a frustração." },
+            { q: "Como a Psicologia contribui para a análise de arquiteturas digitais?", a: "Analisando como os elementos de design influenciam o comportamento dos utilizadores, como estratégias persuasivas que induzem dependência, ajudando a criar interfaces que respeitem a autonomia dos utilizadores." },
+            { q: "Como a Psicologia pode ajudar a combater o efeito de desinibição online e a promover civismo digital?", a: "Através de programas de sensibilização que promovam a empatia, o respeito e o ensino de competências emocionais, reduzindo comportamentos agressivos como o trolling e o discurso de ódio." },
+            { q: "Como a Psicologia pode ajudar a educar crianças sobre a navegação segura na internet?", a: "Desenvolvendo programas de literacia digital focados na verificação de informações, proteção de dados e identificação de riscos (cyberbullying, etc.), e ensinando regulação emocional para promover o autocontrolo." },
+            { q: "Como a Psicologia pode ajudar a otimizar o teletrabalho?", a: "Estudando fatores que afetam produtividade e bem-estar. Ajudando a desenvolver estratégias de gestão de tempo, separação entre trabalho e vida pessoal e ferramentas de regulação emocional contra o stress e isolamento." },
+            { q: "Como a Psicologia pode auxiliar na promoção da cidadania digital?", a: "Fomentando comportamentos éticos e responsáveis online através de programas educativos que ensinam empatia, respeito pelos direitos dos outros e comunicação não agressiva." },
+            { q: "Como a Psicologia pode contribuir para a ciberresiliência dos cidadãos?", a: "Ensinando pensamento crítico e estratégias de coping para lidar com ameaças digitais (ciberataques, desinformação), promovendo a literacia digital e comportamentos de segurança." },
+            { q: "Como a Psicologia pode influenciar o desenvolvimento de algoritmos moralmente responsáveis?", a: "Identificando e eliminando vieses cognitivos e sociais em sistemas de IA, e orientando o desenvolvimento de interfaces transparentes que expliquem como os algoritmos tomam decisões." },
+            { q: "Como a Realidade Virtual pode ser utilizada na formação de psicólogos?", a: "Criando cenários clínicos simulados para praticar competências terapêuticas e de diagnóstico sem risco para pacientes, facilitando o treino em fobias, ansiedade e gestão de crises com validade ecológica." },
+            { q: "Como a transição digital afeta diferentes culturas?", a: "Pode promover a inclusão em algumas culturas, ou acentuar desigualdades noutras. O conteúdo digital tende a refletir a cultura dominante, o que pode criar barreiras para minorias. A psicologia ajuda a garantir sensibilidade a estas diferenças." },
+            { q: "Como as fake news influenciam a tomada de decisão e como a Psicologia pode intervir?", a: "Distorcem a perceção manipulando crenças através de vieses (ex: viés de confirmação). A Psicologia intervém desenvolvendo literacia digital e pensamento crítico para a verificação de fontes." },
+            { q: "Como as tecnologias digitais afetam a saúde mental?", a: "Têm um impacto misto. Oferecem ferramentas de apoio (aplicações, teleterapia), mas o uso excessivo (redes sociais) pode causar ansiedade, depressão, isolamento, distúrbios de sono e baixa autoestima por comparação social." },
+            { q: "Como as tecnologias digitais influenciam o desenvolvimento infantil?", a: "Podem promover cognição através de recursos interativos, mas o uso excessivo prejudica o desenvolvimento socioemocional, causando isolamento, redução de interações face a face, problemas de atenção e de sono." },
+            { q: "Como as tecnologias podem apoiar o envelhecimento saudável?", a: "Promovendo saúde física e mental através de apps de monitorização, sensores de segurança e plataformas sociais para evitar isolamento, facilitando o acesso a cuidados. A psicologia ajuda a torná-las fáceis e acessíveis." },
+            { q: "Como as tecnologias podem ser usadas para apoiar indivíduos com perturbações do espectro do autismo?", a: "Através de plataformas de comunicação que facilitam a expressão, e aplicações interativas (RA/RV) para treinar competências sociais e autonomia em ambientes simulados, reduzindo a ansiedade." },
+            { q: "Como garantir a gestão ética de dados pessoais?", a: "Aplicando princípios de privacidade, transparência e consentimento informado (RGPD). Os psicólogos ajudam criando políticas onde os utilizadores compreendem como os dados são usados e educando-os sobre os seus direitos." },
+            { q: "Como o Big Data pode ser relevante para a Psicologia?", a: "Permite a análise de grandes volumes de dados comportamentais para encontrar padrões, prever fatores de saúde mental e criar intervenções personalizadas, desde que com base em rigor ético." },
+            { q: "Como os princípios de psicologia comportamental são aplicados na criação de ambientes online viciantes?", a: "Através de reforço intermitente (recompensas imprevisíveis) e gamificação (likes, notificações) que ativam o sistema de recompensa do cérebro (dopamina), gerando dependência." },
+            { q: "Como os psicólogos podem auxiliar empresas a desenvolver políticas éticas de privacidade de dados?", a: "Avaliando práticas invasivas, garantindo que as empresas respeitam a autonomia, e ajudando a educar os utilizadores sobre consentimento informado e transparência." },
+            { q: "De que forma a Psicologia pode contribuir para o design de intervenções educativas digitais inclusivas?", a: "Aplicando conhecimentos sobre diversidade cognitiva para criar materiais acessíveis a todos os estilos de aprendizagem e necessidades especiais, promovendo a autonomia dos utilizadores." },
+            { q: "De que forma a Psicologia pode influenciar políticas públicas na era digital?", a: "Fornecendo dados científicos sobre o impacto tecnológico para formular regulamentações que protejam o bem-estar, a privacidade e a segurança online, bem como promovendo a literacia digital." },
+            { q: "De que forma o Big Data influencia a investigação em Psicologia?", a: "Oferece análises mais precisas de comportamentos em larga escala para descobertas mais rápidas, embora levante sérios desafios éticos em relação à privacidade." },
+            { q: "De que maneira a literacia digital pode ser uma ferramenta de empoderamento social?", a: "Capacitando as pessoas a navegar criticamente, participar civicamente e aceder a oportunidades educativas e económicas, diminuindo desigualdades." },
+            { q: "De que maneira a transição digital impacta a saúde psicológica?", a: "Oferece novas formas de terapia, mas também pode gerar stress por sobrecarga de informação, dependência, burnout e isolamento devido à constante conexão." },
+            { q: "De que maneira os psicólogos podem colaborar na criação de algoritmos transparentes e justos?", a: "Identificando vieses cognitivos e preconceitos na programação, e desenvolvendo interfaces que expliquem aos utilizadores as razões pelas quais as decisões algorítmicas são tomadas." },
+            { q: "O que é resiliência digital e como promovê-la?", a: "É a capacidade de enfrentar desafios online (ataques, desinformação, pressão social). Promove-se com literacia digital, regulação emocional, pensamento crítico e redes de apoio." },
+            { q: "Por que é importante promover a literacia digital?", a: "Para que os utilizadores naveguem em segurança, evitem fraudes e fake news, giram o seu tempo online e compreendam as plataformas, tomando decisões éticas e informadas." },
+            { q: "Quais estratégias são eficazes na prevenção de distúrbios associados ao uso digital?", a: "Limitar o tempo de ecrã, criar zonas livres de tecnologia, educar para os riscos de dependência e intervir precocemente perante sinais de abuso tecnológico." },
+            { q: "Quais são as implicações psicológicas do uso de realidade aumentada no dia-a-dia?", a: "Pode enriquecer a cognição e aprendizagem, mas o uso prolongado pode causar confusão sensorial, sobrecarga, isolamento social e dificuldade em separar real do virtual." },
+            { q: "Quais são as tendências futuras na Psicologia da transição digital?", a: "Uso da IA para prever comportamento, integração de Big Data, maior foco em diretrizes éticas sobre emoções e algoritmos, e uso expandido de RV e RA na terapia." },
+            { q: "Quais são os benefícios e os perigos psicológicos da gamificação em ambientes digitais?", a: "Benefícios: aumento de motivação, engajamento e aprendizagem. Perigos: dependência, fadiga de recompensas, competitividade tóxica e stress." },
+            { q: "Quais são os desafios éticos apresentados pela Inteligência Artificial?", a: "Proteção da privacidade, vieses e preconceitos algorítmicos que perpetuam discriminação, e a ameaça à autonomia humana devido a decisões automatizadas opacas." },
+            { q: "Quais são os desafios psicológicos impostos pelo trabalho remoto e como superá-los?", a: "Isolamento, burnout e fronteiras difusas com a vida pessoal. Superam-se com rutinas claras, limites de horários, autocuidado e atividades sociais virtuais da equipa." },
+            { q: "Quais são os principais desafios comportamentais na era digital?", a: "Gestão de privacidade, dificuldade de concentração (distrações constantes), impulsividade, multitarefa ineficiente e equilíbrio frágil entre vida online/offline." },
+            { q: "Quais são os riscos psicológicos associados ao uso excessivo de tecnologias digitais?", a: "Fadiga mental, burnout digital, ansiedade, depressão, quebra na autoestima (por comparação social), isolamento crónico e distúrbios do sono (luz azul)." },
+            { q: "Qual a importância da literacia digital e qual o papel dos psicólogos nesta área?", a: "É crucial para a segurança e pensamento crítico online. Os psicólogos criam programas para ensinar reconhecimento de manipulação, proteção de dados e comportamento ético." },
+            { q: "Qual a importância do envolvimento comunitário em ambientes digitais?", a: "Cria espaços inclusivos e seguros, constrói solidariedade, combate o isolamento social, atenua o cyberbullying e ajuda a desconstruir a desinformação em grupo." },
+            { q: "Qual a relevância da ética no desenvolvimento de sistemas de IA que afetam o comportamento humano?", a: "É essencial para evitar manipulação, garantir o consentimento e proteger a autonomia e a privacidade, visto que a IA influencia fortemente decisões e atitudes." },
+            { q: "Qual é a importância da análise psicológica das arquiteturas digitais?", a: "Permite perceber se o design (usabilidade e estratégias persuasivas) promove comportamentos saudáveis ou explora vulnerabilidades, causando dependência ou frustração." },
+            { q: "Qual é a relação entre o uso das redes sociais e o aumento da ansiedade e depressão?", a: "A comparação constante com vidas idealizadas gera baixa autoestima. Além disso, a dependência de validação (likes) e as interações superficiais geram vazio e ansiedade." },
+            { q: "Qual é o papel da Psicologia na cibersegurança?", a: "Estudar os fatores humanos (comportamentos, vulnerabilidades e stress) que levam a erros de segurança (ex: phishing) e formar utilizadores para serem resilientes e atentos." },
+            { q: "Qual o impacto das arquiteturas digitais manipulativas na autonomia dos utilizadores?", a: "Os 'dark patterns' comprometem a autonomia induzindo escolhas inconscientes ou não intencionais (compras, cedência de dados). A Psicologia denuncia e promove designs éticos." },
+            { q: "Qual o impacto das redes sociais na identidade e interações sociais?", a: "Facilitam a expressão e a criação de comunidades, mas podem gerar identidades baseadas em validação externa, e as interações tornam-se frequentemente mais superficiais e rápidas." },
+            { q: "Qual o impacto das tecnologias digitais na educação?", a: "Permitem personalização e amplo acesso a recursos, mas geram desafios relacionados com distrações constantes em sala de aula e a necessidade de reduzir o fosso tecnológico (equidade)." },
+            { q: "Qual o impacto das tecnologias digitais no desenvolvimento de competências sociais em crianças?", a: "Misto. Podem facilitar a comunicação através de plataformas, mas o excesso diminui interações físicas vitais para o desenvolvimento de empatia e leitura de linguagem não verbal." },
+            { q: "Qual o papel da Psicologia na análise do impacto psicológico das campanhas de desinformação online?", a: "Compreender como o medo, a confusão e vieses cognitivos tornam as pessoas vulneráveis à manipulação, e desenvolver intervenções para promover o pensamento crítico." },
+            { q: "Qual o papel da Psicologia na prevenção do cyberbullying?", a: "Analisar a dinâmica vítima-agressor, desenvolver programas nas escolas para fomentar empatia e regulação emocional, e providenciar apoio clínico a ambos os envolvidos." },
+            { q: "Qual o papel da Psicologia no combate à desinformação?", a: "Estudar as armadilhas cognitivas (como o viés de confirmação) e ensinar literacia mediática para que as pessoas consigam identificar, questionar e ignorar notícias falsas." },
+            { q: "Qual o papel dos psicólogos na adaptação a novas tecnologias?", a: "Gerir a resistência, a ansiedade e o stress tecnológico de indivíduos e organizações, desenvolvendo estratégias de coping e facilitando uma transição saudável para o uso das mesmas." }
+        ];
+
+        let perguntasAtuais = [];
+        let indexAtual = 0;
+        let pontuacaoTotal = 0; // 0 a 2 por pergunta
+
+        function startGame() {
+            let numInput = parseInt(document.getElementById('num-questions').value);
+            if (isNaN(numInput) || numInput < 1) numInput = 10;
+            if (numInput > questoesPTD.length) numInput = questoesPTD.length;
+
+            // Baralhar as questões
+            let baralhado = [...questoesPTD].sort(() => Math.random() - 0.5);
+            perguntasAtuais = baralhado.slice(0, numInput);
+            
+            indexAtual = 0;
+            pontuacaoTotal = 0;
+
+            document.getElementById('setup-screen').style.display = 'none';
+            document.getElementById('game-screen').style.display = 'block';
+            
+            mostrarPergunta();
+        }
+
+        function mostrarPergunta() {
+            // Reset do estado
+            document.getElementById('reveal-btn').style.display = 'inline-block';
+            const answerDiv = document.getElementById('answer-text');
+            answerDiv.style.display = 'none';
+            document.getElementById('evaluation-buttons').style.display = 'none';
+
+            // Preencher textos
+            document.getElementById('progress-text').innerText = `Pergunta ${indexAtual + 1} de ${perguntasAtuais.length}`;
+            document.getElementById('question-text').innerText = perguntasAtuais[indexAtual].q;
+            answerDiv.innerText = perguntasAtuais[indexAtual].a;
+        }
+
+        function revealAnswer() {
+            document.getElementById('reveal-btn').style.display = 'none';
+            document.getElementById('answer-text').style.display = 'block';
+            document.getElementById('evaluation-buttons').style.display = 'flex';
+        }
+
+        function registerScore(pontos) {
+            pontuacaoTotal += pontos;
+            indexAtual++;
+
+            if (indexAtual < perguntasAtuais.length) {
+                mostrarPergunta();
+            } else {
+                mostrarResultados();
+            }
+        }
+
+        function mostrarResultados() {
+            document.getElementById('game-screen').style.display = 'none';
+            document.getElementById('end-screen').style.display = 'block';
+
+            // Pontuação máxima possível = nr de perguntas * 2
+            let maxScore = perguntasAtuais.length * 2;
+            let percentagem = Math.round((pontuacaoTotal / maxScore) * 100);
+
+            document.getElementById('final-score').innerText = percentagem + "%";
+
+            let mensagem = "";
+            if (percentagem >= 90) mensagem = "Excelente! Estás mais que preparado para o teste! 🏆";
+            else if (percentagem >= 70) mensagem = "Muito Bom! Tens um bom domínio da matéria. 🚀";
+            else if (percentagem >= 50) mensagem = "Suficiente. Vale a pena rever alguns conceitos. 📚";
+            else mensagem = "Precisas de estudar mais. Não desistas e volta a tentar! 💪";
+
+            document.getElementById('feedback-message').innerText = mensagem;
+        }
+    </script>
+</body>
+</html>
