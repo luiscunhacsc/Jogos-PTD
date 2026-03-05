@@ -1,4 +1,3 @@
-```md
 # 📚 Pasta de Apoio ao Estudo — PTD (Teste Escrito)
 
 Bem-vindo/a! Esta pasta foi concebida para apoiar a tua preparação para o **teste escrito**, ajudando-te a **aprender (de forma sólida e aplicada)** as respostas às questões previstas, com base no **Banco de Questões** da unidade curricular.
